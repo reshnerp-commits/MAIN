@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Awareness Hub | Stay Safe Online</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --danger: #e63946;
+            --dark: #1d3557;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            background-attachment: fixed;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* Header & Navigation */
+        header {
+            background: linear-gradient(120deg, var(--dark), var(--secondary));
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            font-size: 2rem;
+        }
+        
+        .logo span {
+            color: var(--success);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 1.8rem;
+        }
+        
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 0;
+            position: relative;
+            transition: var(--transition);
+        }
+        
+        .nav-links a:hover, 
+        .nav-links a.active {
+            color: white;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--success);
+            transition: var(--transition);
+        }
+        
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+        
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+        }
+        
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            padding-top: 70px;
+            background: linear-gradient(rgba(29, 53, 87, 0.85), rgba(67, 97, 238, 0.9)), url('https://images.unsplash.com/photo-1550751863-8843bc9f9f57?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(67,97,238,0.15) 0%, rgba(29,53,87,0) 70%);
+            z-index: -1;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero h1 {
+            font-size: 3.8rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .hero p {
+            font-size: 1.4rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .cta-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: var(--success);
+            color: white;
+            padding: 0.9rem 2.2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(76, 201, 240, 0.4);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(76, 201, 240, 0.6);
+        }
+        
+        .cta-button.secondary {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+        
+        .cta-button.secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        /* Section Styling */
+        section {
+            padding: 5rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--dark);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+        
+        .section-title p {
+            color: var(--gray);
+            margin-top: 1.5rem;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 1.1rem;
+        }
+        
+        /* Awareness Cards */
+        .awareness-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .awareness-card {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .awareness-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card-icon {
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+        }
+        
+        .privacy-icon { background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); }
+        .security-icon { background: linear-gradient(135deg, #00c9ff 0%, #92fe9d 100%); }
+        .bullying-icon { background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); }
+        .footprint-icon { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); }
+        .critical-icon { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .balance-icon { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); }
+        
+        .card-content {
+            padding: 1.8rem;
+        }
+        
+        .card-content h3 {
+            font-size: 1.5rem;
+            margin: 1rem 0;
+            color: var(--dark);
+        }
+        
+        .card-content p {
+            color: var(--gray);
+            margin-bottom: 1.2rem;
+        }
+        
+        .learn-more {
+            display: inline-block;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+            padding-right: 20px;
+        }
+        
+        .learn-more i {
+            margin-left: 5px;
+            transition: var(--transition);
+        }
+        
+        .learn-more:hover i {
+            transform: translateX(5px);
+        }
+        
+        /* Quiz Section */
+        .quiz-section {
+            background: linear-gradient(135deg, #1d3557 0%, #4361ee 100%);
+            color: white;
+            text-align: center;
+        }
+        
+        .quiz-section .section-title h2 {
+            color: white;
+        }
+        
+        .quiz-section .section-title h2::after {
+            background: var(--success);
+        }
+        
+        .quiz-section .section-title p {
+            color: rgba(255, 255, 255, 0.85);
+        }
+        
+        .quiz-container {
+            max-width: 700px;
+            margin: 2.5rem auto 0;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius);
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        }
+        
+        .quiz-question {
+            font-size: 1.4rem;
+            margin-bottom: 1.8rem;
+            font-weight: 500;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+        
+        .option {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-sm);
+            padding: 12px 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+        }
+        
+        .option:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        .option.selected {
+            background: rgba(76, 201, 240, 0.3);
+            border-color: var(--success);
+        }
+        
+        .option.correct {
+            background: rgba(46, 204, 113, 0.25);
+            border-color: #2ecc71;
+        }
+        
+        .option.incorrect {
+            background: rgba(231, 76, 60, 0.25);
+            border-color: #e74c3c;
+        }
+        
+        .option i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .quiz-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 0.8rem 2.5rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 10px;
+        }
+        
+        .quiz-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .quiz-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        .quiz-feedback {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            display: none;
+        }
+        
+        .feedback-correct {
+            background: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+            display: block;
+        }
+        
+        .feedback-incorrect {
+            background: rgba(231, 76, 60, 0.2);
+            color: #c0392b;
+            display: block;
+        }
+        
+        /* Tips Section */
+        .tips-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .tip-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--primary);
+            transition: var(--transition);
+        }
+        
+        .tip-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tip-card.privacy { border-top-color: #6a11cb; }
+        .tip-card.security { border-top-color: #00c9ff; }
+        .tip-card.bullying { border-top-color: #ff416c; }
+        .tip-card.footprint { border-top-color: #a18cd1; }
+        
+        .tip-card h3 {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        
+        .tip-card h3 i {
+            margin-right: 12px;
+            font-size: 1.8rem;
+        }
+        
+        .tip-card.privacy h3 i { color: #6a11cb; }
+        .tip-card.security h3 i { color: #00c9ff; }
+        .tip-card.bullying h3 i { color: #ff416c; }
+        .tip-card.footprint h3 i { color: #a18cd1; }
+        
+        /* Pledge Section */
+        .pledge-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            text-align: center;
+        }
+        
+        .pledge-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: var(--radius);
+            padding: 3rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .pledge-text {
+            font-size: 1.3rem;
+            font-style: italic;
+            margin: 1.5rem 0;
+            line-height: 1.7;
+            color: var(--dark);
+            position: relative;
+            padding: 0 2rem;
+        }
+        
+        .pledge-text::before,
+        .pledge-text::after {
+            content: '"';
+            font-size: 3rem;
+            color: var(--primary);
+            opacity: 0.3;
+            position: absolute;
+        }
+        
+        .pledge-text::before {
+            top: -20px;
+            left: 0;
+        }
+        
+        .pledge-text::after {
+            content: '"';
+            bottom: -40px;
+            right: 0;
+            transform: rotate(180deg);
+        }
+        
+        .pledge-btn {
+            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 1.5rem;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.4);
+        }
+        
+        .pledge-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.6);
+        }
+        
+        /* Resources Section */
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2.5rem;
+        }
+        
+        .resource-card {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .resource-img {
+            height: 150px;
+            background: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--primary);
+        }
+        
+        .resource-content {
+            padding: 1.8rem;
+        }
+        
+        .resource-content h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+            color: var(--dark);
+        }
+        
+        .resource-content p {
+            color: var(--gray);
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        
+        .resource-link {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .resource-link:hover {
+            background: var(--secondary);
+            transform: translateX(5px);
+        }
+        
+        /* Footer */
+        footer {
+            background: linear-gradient(120deg, var(--dark), #0d1b2a);
+            color: rgba(255, 255, 255, 0.85);
+            padding: 3.5rem 0 1.5rem;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2.5rem;
+        }
+        
+        .footer-col h3 {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1.8rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-col h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--success);
+            border-radius: 2px;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.9rem;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: var(--transition);
+            display: block;
+            padding: 3px 0;
+        }
+        
+        .footer-links a:hover {
+            color: var(--success);
+            transform: translateX(5px);
+        }
+        
+        .footer-about p {
+            margin: 1rem 0;
+            line-height: 1.7;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 1.5rem;
+        }
+        
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+        
+        .social-links a:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 2.5rem;
+            margin-top: 2.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 3.2rem;
+            }
+            
+            .hero p {
+                font-size: 1.25rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+            
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                right: -100%;
+                width: 85%;
+                height: calc(100vh - 70px);
+                background: white;
+                flex-direction: column;
+                align-items: center;
+                padding-top: 2.5rem;
+                box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
+                transition: var(--transition);
+                z-index: 999;
+            }
+            
+            .nav-links.active {
+                right: 0;
+            }
+            
+            .nav-links li {
+                margin: 1.2rem 0;
+            }
+            
+            .nav-links a {
+                color: var(--dark);
+                font-size: 1.3rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.7rem;
+            }
+            
+            .hero p {
+                font-size: 1.15rem;
+            }
+            
+            .cta-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .cta-button {
+                width: 100%;
+                max-width: 350px;
+                margin-bottom: 10px;
+            }
+            
+            section {
+                padding: 3.5rem 0;
+            }
+            
+            .section-title h2 {
+                font-size: 2.1rem;
+            }
+            
+            .quiz-container {
+                padding: 1.8rem;
+            }
+            
+            .pledge-container {
+                padding: 2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2.3rem;
+            }
+            
+            .hero p {
+                font-size: 1.05rem;
+            }
+            
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+            
+            .card-content h3 {
+                font-size: 1.35rem;
+            }
+            
+            .quiz-question {
+                font-size: 1.2rem;
+            }
+            
+            .option {
+                padding: 10px 12px;
+                font-size: 0.95rem;
+            }
+            
+            .tip-card h3 {
+                font-size: 1.35rem;
+            }
+            
+            .pledge-text {
+                font-size: 1.15rem;
+                padding: 0 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with Navigation -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="#" class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                    Digital<span>Aware</span>
+                </a>
+                <button class="hamburger" id="hamburger">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <ul class="nav-links" id="nav-links">
+                    <li><a href="#" class="active">Home</a></li>
+                    <li><a href="#awareness">Key Topics</a></li>
+                    <li><a href="#quiz">Test Your Knowledge</a></li>
+                    <li><a href="#tips">Safety Tips</a></li>
+                    <li><a href="#resources">Resources</a></li>
+                    <li><a href="#pledge">Take Action</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Navigate the Digital World Safely & Responsibly</h1>
+                <p>Empowering individuals with the knowledge and tools to protect themselves online, recognize threats, and build healthy digital habits.</p>
+                <div class="cta-container">
+                    <a href="#awareness" class="cta-button">Learn Key Topics</a>
+                    <a href="#quiz" class="cta-button secondary">Test Your Knowledge</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Awareness Topics Section -->
+    <section id="awareness" class="awareness-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Digital Awareness Essentials</h2>
+                <p>Understanding these critical areas will help you stay safe and make informed decisions in our increasingly connected world.</p>
+            </div>
+            <div class="awareness-grid">
+                <div class="awareness-card">
+                    <div class="card-icon privacy-icon">
+                        <i class="fas fa-user-secret"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Online Privacy</h3>
+                        <p>Learn how to control your personal information, understand privacy settings, and protect your data from unauthorized access.</p>
+                        <a href="#" class="learn-more">Learn More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                
+                <div class="awareness-card">
+                    <div class="card-icon security-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Digital Security</h3>
+                        <p>Discover best practices for strong passwords, two-factor authentication, and protecting your devices from malware and hackers.</p>
+                        <a href="#" class="learn-more">Learn More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                
+                <div class="awareness-card">
+                    <div class="card-icon bullying-icon">
+                        <i class="fas fa-heart-broken"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Cyberbullying Prevention</h3>
+                        <p>Recognize the signs of cyberbullying, learn how to respond effectively, and understand how to create a positive online environment.</p>
+                        <a href="#" class="learn-more">Learn More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                
+                <div class="awareness-card">
+                    <div class="card-icon footprint-icon">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Digital Footprint</h3>
+                        <p>Understand the lasting impact of your online activities and learn how to manage your digital reputation for personal and professional success.</p>
+                        <a href="#" class="learn-more">Learn More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                
+                <div class="awareness-card">
+                    <div class="card-icon critical-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Critical Thinking Online</h3>
+                        <p>Develop skills to identify misinformation, evaluate online sources, and think critically about content you encounter on the internet.</p>
+                        <a href="#" class="learn-more">Learn More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                
+                <div class="awareness-card">
+                    <div class="card-icon balance-icon">
+                        <i class="fas fa-balance-scale"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Digital Wellbeing</h3>
+                        <p>Learn strategies for maintaining a healthy balance with technology, managing screen time, and protecting your mental health online.</p>
+                        <a href="#" class="learn-more">Learn More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quiz Section -->
+    <section id="quiz" class="quiz-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Test Your Digital Awareness</h2>
+                <p>Take this quick quiz to assess your knowledge of online safety practices. Select the best answer for each question.</p>
+            </div>
+            <div class="quiz-container">
+                <div class="quiz-question" id="question">Which of these is the most secure password?</div>
+                <div class="options">
+                    <div class="option" data-value="weak">password123</div>
+                    <div class="option" data-value="weak">iloveyou</div>
+                    <div class="option" data-value="weak">qwertyuiop</div>
+                    <div class="option" data-value="strong">Tr0ub4dor&3 (with special characters and numbers)</div>
+                </div>
+                <button class="quiz-btn" id="submit-btn">Submit Answer</button>
+                <div class="quiz-feedback" id="feedback"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tips Section -->
+    <section id="tips" class="tips-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Practical Safety Tips</h2>
+                <p>Implement these actionable strategies to enhance your digital safety today.</p>
+            </div>
+            <div class="tips-container">
+                <div class="tip-card privacy">
+                    <h3><i class="fas fa-eye-slash"></i> Protect Your Privacy</h3>
+                    <p>Regularly review privacy settings on social media and apps. Limit the personal information you share online, especially location data, birthdates, and contact details.</p>
+                </div>
+                <div class="tip-card security">
+                    <h3><i class="fas fa-shield-alt"></i> Strengthen Security</h3>
+                    <p>Use unique, complex passwords for each account and enable two-factor authentication wherever possible. Keep your software and devices updated with the latest security patches.</p>
+                </div>
+                <div class="tip-card bullying">
+                    <h3><i class="fas fa-hand-holding-heart"></i> Combat Cyberbullying</h3>
+                    <p>If you witness cyberbullying, don't participate or share harmful content. Support the target, report the behavior to platform moderators, and save evidence of the harassment.</p>
+                </div>
+                <div class="tip-card footprint">
+                    <h3><i class="fas fa-search"></i> Audit Your Digital Footprint</h3>
+                    <p>Periodically search your name online to see what information is publicly available. Request removal of outdated or inappropriate content from websites and adjust your privacy settings accordingly.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pledge Section -->
+    <section id="pledge" class="pledge-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Take The Digital Awareness Pledge</h2>
+                <p>Join thousands of others committed to creating a safer, healthier digital world.</p>
+            </div>
+            <div class="pledge-container">
+                <div class="pledge-text">
+                    I pledge to be mindful of my digital footprint, protect my personal information, treat others with respect online, think critically about content I consume and share, and take regular breaks from technology to maintain balance in my life.
+                </div>
+                <button class="pledge-btn" id="pledge-btn">I Take The Pledge</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resources Section -->
+    <section id="resources" class="resources-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Helpful Resources</h2>
+                <p>Explore these trusted organizations and tools to deepen your digital awareness knowledge.</p>
+            </div>
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <div class="resource-img">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div class="resource-content">
+                        <h3>Digital Literacy Guide</h3>
+                        <p>Comprehensive resource covering online safety fundamentals, privacy protection, and critical thinking skills for all ages.</p>
+                        <a href="#" class="resource-link">Download Guide</a>
+                    </div>
+                </div>
+                
+                <div class="resource-card">
+                    <div class="resource-img">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <div class="resource-content">
+                        <h3>Security Toolkit</h3>
+                        <p>Practical tools including password managers, encryption software, and step-by-step guides to secure your devices and accounts.</p>
+                        <a href="#" class="resource-link">Access Toolkit</a>
+                    </div>
+                </div>
+                
+                <div class="resource-card">
+                    <div class="resource-img">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="resource-content">
+                        <h3>Parent Resources</h3>
+                        <p>Age-appropriate conversation starters, family media agreements, and monitoring tools to help guide children's digital experiences.</p>
+                        <a href="#" class="resource-link">For Parents</a>
+                    </div>
+                </div>
+                
+                <div class="resource-card">
+                    <div class="resource-img">
+                        <i class="fas fa-hands-helping"></i>
+                    </div>
+                    <div class="resource-content">
+                        <h3>Support Networks</h3>
+                        <p>Hotlines, counseling services, and reporting mechanisms for those experiencing cyberbullying, online harassment, or digital abuse.</p>
+                        <a href="#" class="resource-link">Get Support</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col footer-about">
+                    <h3>DigitalAware</h3>
+                    <p>Our mission is to empower individuals with the knowledge and skills needed to navigate the digital world safely, responsibly, and confidently.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#awareness">Key Topics</a></li>
+                        <li><a href="#quiz">Knowledge Quiz</a></li>
+                        <li><a href="#tips">Safety Tips</a></li>
+                        <li><a href="#pledge">Take The Pledge</a></li>
+                        <li><a href="#resources">Resources</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Key Topics</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Online Privacy</a></li>
+                        <li><a href="#">Digital Security</a></li>
+                        <li><a href="#">Cyberbullying Prevention</a></li>
+                        <li><a href="#">Digital Footprint</a></li>
+                        <li><a href="#">Critical Thinking Online</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h3>Contact Us</h3>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-envelope"></i> info@digitalaware.org</li>
+                        <li><i class="fas fa-phone"></i> +1 (800) 555-0199</li>
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Safety Street, Digital City</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2026 DigitalAware. All rights reserved. | Empowering safe digital citizens worldwide</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Navigation Toggle
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('nav-links');
+        
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const icon = hamburger.querySelector('i');
+            if (navLinks.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+        
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                const icon = hamburger.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            });
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if(targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Quiz Functionality
+        const options = document.querySelectorAll('.option');
+        const submitBtn = document.getElementById('submit-btn');
+        const feedback = document.getElementById('feedback');
+        let selectedOption = null;
+        
+        options.forEach(option => {
+            option.addEventListener('click', () => {
+                // Remove selected class from all options
+                options.forEach(opt => opt.classList.remove('selected'));
+                
+                // Add selected class to clicked option
+                option.classList.add('selected');
+                selectedOption = option;
+                
+                // Hide feedback when new selection is made
+                feedback.style.display = 'none';
+            });
+        });
+        
+        submitBtn.addEventListener('click', () => {
+            if (!selectedOption) {
+                feedback.textContent = 'Please select an answer before submitting.';
+                feedback.className = 'quiz-feedback feedback-incorrect';
+                feedback.style.display = 'block';
+                return;
+            }
+            
+            // Check if answer is correct
+            if (selectedOption.dataset.value === 'strong') {
+                feedback.textContent = 'Correct! Using a mix of uppercase, lowercase, numbers, and special characters creates a strong password.';
+                feedback.className = 'quiz-feedback feedback-correct';
+                selectedOption.classList.add('correct');
+            } else {
+                feedback.textContent = 'Incorrect. Simple passwords like these are easily guessed. Always use complex passwords with special characters and numbers.';
+                feedback.className = 'quiz-feedback feedback-incorrect';
+                selectedOption.classList.add('incorrect');
+                
+                // Highlight correct answer
+                document.querySelector('.option[data-value="strong"]').classList.add('correct');
+            }
+            
+            feedback.style.display = 'block';
+            submitBtn.disabled = true;
+        });
+        
+        // Pledge Button Functionality
+        const pledgeBtn = document.getElementById('pledge-btn');
+        pledgeBtn.addEventListener('click', () => {
+            // Show confirmation message
+            const originalText = pledgeBtn.textContent;
+            pledgeBtn.textContent = 'Pledge Submitted! Thank you for your commitment.';
+            pledgeBtn.style.background = 'linear-gradient(120deg, #2ecc71, #27ae60)';
+            
+            // Reset after 3 seconds
+            setTimeout(() => {
+                pledgeBtn.textContent = originalText;
+                pledgeBtn.style.background = '';
+            }, 3000);
+            
+            // In a real application, this would submit the pledge to a server
+        });
+        
+        // Add scroll animation to awareness cards
+        const observerOptions = {
+            threshold: 0.1
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.awareness-card, .tip-card, .resource-card').forEach(card => {
+            card.style.opacity = 0;
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
