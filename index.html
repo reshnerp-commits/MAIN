@@ -1,0 +1,308 @@
+
+You are given a task to integrate an existing React component in the codebase
+
+The codebase should support:
+- shadcn project structure  
+- Tailwind CSS
+- Typescript
+
+If it doesn't, provide instructions on how to setup project via shadcn CLI, install Tailwind or Typescript.
+
+Determine yourself the ideal path for components and styles. 
+If default path for components is not /components/ui, provide instructions on why it's important to create this folder
+Copy-paste this component to /components/ui folder:
+```tsx
+Website
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Progress } from "@/components/ui/progress";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import { ChartContainer } from "@/components/ui/chart";
+
+export function Website() {
+  return (
+    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/20">
+      <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
+        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="size-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground">
+              <svg
+                fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                className="size-5"
+              >
+                <path d="M12.0003 3C17.3924 3 21.8784 6.87976 22.8189 12C21.8784 17.1202 17.3924 21 12.0003 21C6.60812 21 2.12215 17.1202 1.18164 12C2.12215 6.87976 6.60812 3 12.0003 3ZM12.0003 19C16.2359 19 19.8603 16.052 20.7777 12C19.8603 7.94803 16.2359 5 12.0003 5C7.7646 5 4.14022 7.94803 3.22278 12C4.14022 16.052 7.7646 19 12.0003 19ZM12.0003 16.5C9.51498 16.5 7.50026 14.4853 7.50026 12C7.50026 9.51472 9.51498 7.5 12.0003 7.5C14.4855 7.5 16.5003 9.51472 16.5003 12C16.5003 14.4853 14.4855 16.5 12.0003 16.5ZM12.0003 14.5C13.381 14.5 14.5003 13.3807 14.5003 12C14.5003 10.6193 13.381 9.5 12.0003 9.5C10.6196 9.5 9.50026 10.6193 9.50026 12C9.50026 13.3807 10.6196 14.5 12.0003 14.5Z" />
+              </svg>
+            </div>
+            <span className="font-heading font-bold text-xl tracking-tight">FlowState</span>
+          </div>
+          <nav className="hidden md:flex items-center gap-8">
+            <a href="#" className="text-sm font-medium hover:text-primary transition-colors">
+              Features
+            </a>
+            <a href="#" className="text-sm font-medium hover:text-primary transition-colors">
+              Solutions
+            </a>
+            <a href="#" className="text-sm font-medium hover:text-primary transition-colors">
+              Pricing
+            </a>
+            <a href="#" className="text-sm font-medium hover:text-primary transition-colors">
+              Docs
+            </a>
+          </nav>
+          <div className="flex items-center gap-4">
+            <a
+              href="#"
+              className="hidden sm:block text-sm font-medium hover:text-primary transition-colors"
+            >
+              Sign in
+            </a>
+            <Button className="shadow-lg shadow-primary/20 bg-gradient-to-br from-primary to-primary/90">
+              Get Started
+            </Button>
+          </div>
+        </div>
+      </header>
+      <main>
+        <section className="relative pt-20 pb-32 overflow-hidden">
+          <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-background to-background" />
+          <div className="container mx-auto px-4 text-center">
+            <Badge
+              variant="secondary"
+              className="mb-6 px-4 py-1.5 text-sm rounded-full border border-primary/20 text-primary"
+            >
+              <span className="mr-2 text-xs bg-primary text-white px-1.5 py-0.5 rounded-full">
+                New
+              </span>
+              Smart Automation v2.0 is now live
+            </Badge>
+            <h1 className="font-heading text-5xl md:text-7xl font-bold tracking-tight mb-6 text-slate-900 dark:text-slate-100 max-w-4xl mx-auto">
+              Manage projects with{" "}
+              <span className="text-primary relative whitespace-nowrap">
+                radical clarity
+                <svg
+                  viewBox="0 0 100 10"
+                  className="absolute -bottom-2 left-0 w-full h-3 text-primary/30"
+                  preserveAspectRatio="none"
+                >
+                  <path d="M0 5 Q 50 10 100 5" fill="none" stroke="currentColor" strokeWidth="3" />
+                </svg>
+              </span>
+            </h1>
+            <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
+              The all-in-one workspace that combines your tasks, goals, and team collaboration into
+              a single, beautiful interface.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
+              <Button
+                size="lg"
+                className="h-12 px-8 text-base shadow-lg shadow-primary/25 bg-gradient-to-br from-primary to-primary/90 rounded-full"
+              >
+                Start for free
+                <svg
+                  fill="none"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="24"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  className="ml-2 size-4"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M5 12h14" />
+                  <path d="m12 5 7 7-7 7" />
+                </svg>
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="h-12 px-8 text-base rounded-full border-2"
+              >
+                View demo
+              </Button>
+            </div>
+            <div className="relative mx-auto max-w-5xl">
+              <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-[2rem] opacity-30 blur-2xl" />
+              <Card className="relative overflow-hidden border shadow-2xl bg-card">
+                <div className="bg-muted/30 border-b p-4 flex items-center gap-4">
+                  <div className="flex gap-2">
+                    <div className="size-3 rounded-full bg-red-400" />
+                    <div className="size-3 rounded-full bg-yellow-400" />
+                    <div className="size-3 rounded-full bg-green-400" />
+                  </div>
+                  <div className="h-6 w-96 bg-background rounded-md border flex items-center px-3 text-xs text-muted-foreground">
+                    flowstate.app/dashboard/project-alpha
+                  </div>
+                </div>
+                <div className="p-0 grid grid-cols-1 md:grid-cols-[240px_1fr] h-[500px]">
+                  <div className="hidden md:flex flex-col border-r bg-muted/10 p-4 gap-6">
+                    <div className="space-y-1">
+                      <div className="px-3 py-2 text-sm font-medium text-primary bg-primary/10 rounded-lg">
+                        Overview
+                      </div>
+                      <div className="px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/50 rounded-lg">
+                        My Tasks
+                      </div>
+                      <div className="px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/50 rounded-lg">
+                        Inbox
+                      </div>
+                      <div className="px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/50 rounded-lg">
+                        Goals
+                      </div>
+                    </div>
+                    <div className="space-y-2 mt-auto">
+                      <Card className="bg-primary/5 border-none p-4">
+                        <div className="text-xs font-semibold text-primary mb-1">Pro Plan</div>
+                        <div className="text-xs text-muted-foreground mb-3">
+                          Your trial ends in 3 days.
+                        </div>
+                        <Button size="sm" className="w-full text-xs h-7">
+                          Upgrade
+                        </Button>
+                      </Card>
+                    </div>
+                  </div>
+                  <div className="p-6 bg-background overflow-hidden flex flex-col gap-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h2 className="text-2xl font-bold font-heading">Marketing Campaign Q3</h2>
+                        <p className="text-sm text-muted-foreground">
+                          Track progress and deliverables
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="flex -space-x-2">
+                          <Avatar className="border-2 border-background size-8">
+                            <AvatarImage src="https://randomuser.me/api/portraits/women/42.jpg" />
+                            <AvatarFallback>JD</AvatarFallback>
+                          </Avatar>
+                          <Avatar className="border-2 border-background size-8">
+                            <AvatarImage src="https://randomuser.me/api/portraits/men/32.jpg" />
+                            <AvatarFallback>KM</AvatarFallback>
+                          </Avatar>
+                          <Avatar className="border-2 border-background size-8">
+                            <AvatarImage src="https://randomuser.me/api/portraits/women/12.jpg" />
+                            <AvatarFallback>AL</AvatarFallback>
+                          </Avatar>
+                        </div>
+                        <Button size="sm" variant="outline" className="h-8 gap-2">
+                          <svg
+                            fill="none"
+                            width="24"
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="24"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            className="size-4"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                            <circle r="4" cx="9" cy="7" />
+                            <line x1="19" x2="19" y1="8" y2="14" />
+                            <line x1="22" x2="16" y1="11" y2="11" />
+                          </svg>
+                          Share
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <Card className="p-4 flex flex-col justify-between">
+                        <div className="text-sm font-medium text-muted-foreground">Total Tasks</div>
+                        <div className="text-3xl font-bold mt-2">64</div>
+                        <div className="mt-2 text-xs text-green-600 flex items-center gap-1">
+                          <svg
+                            fill="none"
+                            width="24"
+                            xmlns="http://www.w3.org/2000/svg"
+                            height="24"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            className="size-3"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="m5 12 7-7 7 7" />
+                            <path d="M12 19V5" />
+                          </svg>
+                          12% increase
+                        </div>
+                      </Card>
+                      <Card className="p-4 flex flex-col justify-between">
+                        <div className="text-sm font-medium text-muted-foreground">Completed</div>
+                        <div className="text-3xl font-bold mt-2">48</div>
+                        <Progress value={75} className="h-1.5 mt-2" />
+                      </Card>
+                      <Card className="p-4 flex flex-col justify-between">
+                        <div className="text-sm font-medium text-muted-foreground">
+                          Team Velocity
+                        </div>
+                        <div className="text-3xl font-bold mt-2">
+                          24
+                          <span className="text-sm font-normal text-muted-foreground ml-1">
+                            pts
+                          </span>
+                        </div>
+                        <div className="mt-2 text-xs text-muted-foreground">Avg per sprint</div>
+                      </Card>
+                    </div>
+                    <Card className="flex-1 p-0 overflow-hidden flex flex-col">
+                      <div className="px-6 py-4 border-b flex items-center justify-between bg-muted/5">
+                        <h3 className="font-semibold text-sm">Activity Overview</h3>
+                        <Select defaultValue="week">
+                          <SelectTrigger className="w-[100px] h-8 text-xs">
+                            <SelectValue placeholder="Period" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="week">This Week</SelectItem>
+                            <SelectItem value="month">This Month</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="flex-1 p-4 min-h-[200px]">
+                        <ChartContainer
+                          config={{
+                            tasks: { color: "var(--primary)", label: "Tasks" },
+                            completed: { color: "var(--accent)", label: "Completed" },
+                          }}
+                          className="h-full w-full"
+                        />
+                      </div>
+                    </Card>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  );
+}
+
+```
+
+Implementation Guidelines
+ 1. Analyze the component structure and identify all required dependencies (imported components are shadcn/ui, therefore you should install them if not present)
+ 2. Make sure to ask the user, if not specified, whether and where they want to use it in their existing codebase yet
+ 3. Create and adapt the business logic of the component to the user's codebase context
+
+Steps to integrate
+ 0. Copy paste all the code above in the correct directories
+ 1. Install external dependencies
+  
