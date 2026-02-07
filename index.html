@@ -4,105 +4,64 @@
 <meta charset="UTF-8">
 <title>AI Chat</title>
 <style>
-body {
-  background: #0f172a;
-  color: white;
-  font-family: Arial, sans-serif;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  margin: 0;
+background: #a85517;
+display: flex;
+justify-content: center;
+align-items: center;
+height: 100vh;
+overflow: hidden;
+R
 }
-header {
-  background: #1e293b;
-  padding: 15px;
-  text-align: center;
-  font-weight: bold;
+span {
+font-size: 100px;
+color: #fff;
+font-family: 'Arial':
+text-transform: uppercase;
+display: inline-block;
+transform: rotateY(Odeg);
+transition: 0.5s
+animation; bounce 0.4s ease infinite alternate;
+position: relative; /* Added this to allow 'top' property "/
+
+h1 span:nth-child(3) {
 }
-#chat {
-  flex: 1;
-  padding: 15px;
-  overflow-y: auto;
+animation-delay: 0.2s;
+h1 span:nth-child(4) (
 }
-.msg {
-  margin-bottom: 10px;
+
+animation-delay: 0.4s;
+h1 span:nth-child(5) {
 }
-.user {
-  text-align: right;
-  color: #93c5fd;
+
+animation-delay: 0.6s;
+h1 span:nth-child(6) {
+
 }
-.ai {
-  text-align: left;
-  color: #86efac;
-}
-footer {
-  display: flex;
-  padding: 10px;
-  background: #1e293b;
-}
-input {
-  flex: 1;
-  padding: 10px;
-  border-radius: 5px;
-  border: none;
-}
-button {
-  margin-left: 10px;
-  padding: 10px 15px;
-  background: #3b82f6;
-  border: none;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
-}
+animation-delay: 0.8s;
+  @keyframes bouncei
+100%{
+top:-20px;
+text-shadow: O 1px 0 #ccc,
+0 2px 0 #ccc,
+0 3px0#ccc.
+0 4px 0 #cCC,
+0 5px 0 #ccc,
+0 bpx 0 #ccC,
+0 7pxO #ccc,
+0 8px 0 #ccc;
+
+    }
+  }
 </style>
 </head>
 
 <body>
 
-<header>AI Assistant 🤖</header>
-
-<div id="chat"></div>
-
-<footer>
-  <input id="input" placeholder="Ask me anything...">
-  <button onclick="send()">Send</button>
-</footer>
-
-<script>
-const chat = document.getElementById("chat");
-
-function addMsg(text, cls) {
-  const div = document.createElement("div");
-  div.className = "msg " + cls;
-  div.innerText = text;
-  chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight;
-}
-
-function fakeAIResponse(text) {
-  const replies = [
-    "Interesting question 🤔",
-    "I'm still learning, but here's what I think:",
-    "That sounds cool!",
-    "Let me explain it simply:",
-    "Good question! 👌"
-  ];
-  return replies[Math.floor(Math.random() * replies.length)] + " " + text;
-}
-
-function send() {
-  const text = input.value.trim();
-  if (!text) return;
-
-  addMsg("You: " + text, "user");
-  input.value = "";
-
-  setTimeout(() => {
-    addMsg("AI: " + fakeAIResponse(text), "ai");
-  }, 600);
-}
-</script>
-
+<span>H</span>
+<span>E</span>
+<span>L</span>
+<span>L</span>
+<span>O</span>
+  
 </body>
 </html>
