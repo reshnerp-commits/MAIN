@@ -1,4 +1,8 @@
 
+Two factor 
+https://github.com/user-attachments/assets/0b087663-5f4c-4f6a-9bcb-9fcb99f56314
+
+
 Password
 
 https://github.com/user-attachments/assets/b920f14e-4090-41ab-b590-eb665b9a611e
