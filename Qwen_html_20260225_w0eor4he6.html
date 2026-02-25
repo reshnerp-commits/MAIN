@@ -1,0 +1,3352 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Awareness Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#64748b',
+                    },
+                    screens: {
+                        'sm': '640px',
+                        'md': '768px',
+                        'lg': '1024px',
+                        'xl': '1280px',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .sidebar-item:hover { background-color: #f1f5f9; }
+        .dark .sidebar-item:hover { background-color: #1e293b; }
+        .sidebar-item.active { background-color: #eff6ff; color: #3b82f6; font-weight: 500; }
+        .dark .sidebar-item.active { background-color: #1e3a5f; color: #60a5fa; }
+        .content-section { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .content-section.active { display: block; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .dark .card-hover:hover { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Audio Wave Animation */
+        .audio-wave { display: flex; align-items: flex-end; gap: 3px; height: 20px; }
+        .audio-bar { width: 4px; background-color: #3b82f6; border-radius: 2px; animation: wave 1s infinite ease-in-out; }
+        .dark .audio-bar { background-color: #60a5fa; }
+        .audio-bar:nth-child(2) { animation-delay: 0.1s; height: 60%; }
+        .audio-bar:nth-child(3) { animation-delay: 0.2s; height: 80%; }
+        .audio-bar:nth-child(4) { animation-delay: 0.3s; height: 50%; }
+        .audio-bar:nth-child(5) { animation-delay: 0.4s; height: 70%; }
+        @keyframes wave { 0%, 100% { height: 30%; } 50% { height: 100%; } }
+        
+        .audio-wave.paused .audio-bar {
+            animation: none;
+            height: 30%;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 260px;
+            z-index: 30;
+            transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
+        }
+        
+        .sidebar.collapsed {
+            transform: translateX(-260px);
+        }
+        
+        .sidebar.collapsed .sidebar-text,
+        .sidebar.collapsed .logo-text,
+        .sidebar.collapsed .footer-text {
+            display: none;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            transition: margin-left 0.3s ease-in-out;
+            min-height: 100vh;
+        }
+        
+        .main-content.expanded {
+            margin-left: 0;
+        }
+        
+        /* Toggle Button Animation */
+        .toggle-btn i {
+            transition: transform 0.3s ease-in-out;
+        }
+        .toggle-btn.rotated i {
+            transform: rotate(90deg);
+        }
+        
+        /* Overlay for mobile */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 25;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Dark Mode Toggle Switch */
+        .theme-toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background-color: #e2e8f0;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            flex-shrink: 0;
+        }
+        .dark .theme-toggle {
+            background-color: #475569;
+        }
+        .theme-toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .dark .theme-toggle-slider {
+            transform: translateX(30px);
+            background-color: #fbbf24;
+        }
+        .theme-toggle-icon {
+            font-size: 12px;
+            transition: opacity 0.3s ease;
+        }
+        .theme-toggle-icon.sun {
+            opacity: 1;
+            color: #f59e0b;
+        }
+        .theme-toggle-icon.moon {
+            opacity: 0;
+            color: #1e293b;
+            position: absolute;
+        }
+        .dark .theme-toggle-icon.sun {
+            opacity: 0;
+        }
+        .dark .theme-toggle-icon.moon {
+            opacity: 1;
+            color: #1e293b;
+        }
+        
+        /* Responsive Navigation */
+        @media (max-width: 640px) {
+            .sidebar {
+                transform: translateX(-260px);
+            }
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0 !important;
+            }
+            .theme-toggle {
+                width: 50px;
+                height: 26px;
+            }
+            .dark .theme-toggle-slider {
+                transform: translateX(24px);
+            }
+            .hide-sm {
+                display: none !important;
+            }
+            .search-container {
+                display: none;
+            }
+            .profile-name {
+                display: none;
+            }
+            .header-title h1 {
+                font-size: 1.25rem;
+            }
+            .header-title p {
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (min-width: 641px) and (max-width: 768px) {
+            .hide-md {
+                display: none !important;
+            }
+            .search-container input {
+                width: 180px;
+            }
+            .profile-name {
+                display: none;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .hide-lg {
+                display: none !important;
+            }
+            .search-container input {
+                width: 200px;
+            }
+        }
+
+        @media (min-width: 1025px) {
+            .search-container input {
+                width: 260px;
+            }
+        }
+
+        /* Smooth theme transition */
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        /* Prevent horizontal scroll */
+        html, body {
+            overflow-x: hidden;
+        }
+        
+        /* Header fixed width to prevent shift */
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            gap: 16px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .header-title {
+            min-width: 0;
+        }
+
+        .header-title h1 {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .header-title p {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Custom Range Slider for Progress & Volume */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+        }
+        
+        .dark input[type="range"] {
+            background: #475569;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #3b82f6;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+        
+        .dark input[type="range"]::-webkit-slider-thumb {
+            background: #60a5fa;
+        }
+        
+        /* Episode active state */
+        .episode-item.active {
+            background-color: #eff6ff;
+            border-left: 3px solid #3b82f6;
+        }
+        
+        .dark .episode-item.active {
+            background-color: #1e3a5f;
+            border-left: 3px solid #60a5fa;
+        }
+        
+        .playing-indicator {
+            display: none;
+        }
+        
+        .episode-item.active .playing-indicator {
+            display: flex;
+        }
+        
+        .episode-item.active .play-icon {
+            display: none;
+        }
+
+        /* Volume slider container */
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100px;
+        }
+        
+        .volume-slider {
+            width: 70px;
+            height: 4px;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        
+        .dark .toast {
+            background: #1e293b;
+            border-color: #475569;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Module Styles */
+        .module-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .module-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dark .module-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .module-card.completed {
+            border-color: #22c55e;
+        }
+        
+        .module-card.active {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+        
+        .dark .module-card.active {
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        
+        .module-content {
+            display: none;
+        }
+        
+        .module-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        
+        .quiz-option {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .quiz-option:hover {
+            background-color: #f1f5f9;
+        }
+        
+        .dark .quiz-option:hover {
+            background-color: #1e293b;
+        }
+        
+        .quiz-option.selected {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+        }
+        
+        .dark .quiz-option.selected {
+            background-color: #1e3a5f;
+            border-color: #60a5fa;
+        }
+        
+        .quiz-option.correct {
+            background-color: #dcfce7;
+            border-color: #22c55e;
+        }
+        
+        .dark .quiz-option.correct {
+            background-color: #166534;
+            border-color: #22c55e;
+        }
+        
+        .quiz-option.incorrect {
+            background-color: #fee2e2;
+            border-color: #ef4444;
+        }
+        
+        .dark .quiz-option.incorrect {
+            background-color: #991b1b;
+            border-color: #ef4444;
+        }
+
+        /* Lesson Navigation */
+        .lesson-nav-btn {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .lesson-nav-btn:hover:not(:disabled) {
+            background-color: #f1f5f9;
+        }
+        
+        .dark .lesson-nav-btn:hover:not(:disabled) {
+            background-color: #1e293b;
+        }
+        
+        .lesson-nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Back button */
+        .back-btn {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .back-btn:hover {
+            color: #3b82f6;
+        }
+        
+        .dark .back-btn:hover {
+            color: #60a5fa;
+        }
+
+        /* Dashboard Activity Item */
+        .activity-item {
+            transition: all 0.3s ease;
+        }
+        
+        .activity-item.dismissed {
+            opacity: 0;
+            transform: translateX(100px);
+            height: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        /* Refresh button animation */
+        .refresh-btn {
+            transition: transform 0.5s ease;
+        }
+        
+        .refresh-btn.spinning {
+            animation: spin 0.5s ease;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Tip dismiss button */
+        .tip-dismiss {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .tip-card:hover .tip-dismiss {
+            opacity: 1;
+        }
+
+        /* Video Card Styles - Updated for GitHub Videos */
+        .video-card {
+            transition: all 0.3s ease;
+        }
+        
+        .video-card:hover {
+            transform: translateY(-4px);
+        }
+        
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 0.75rem;
+            background: #0f172a;
+        }
+        
+        .dark .video-container {
+            background: #020617;
+        }
+        
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0.75rem;
+        }
+        
+        .video-container .video-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            font-size: 0.875rem;
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        .video-category {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Team Member Card */
+        .team-member {
+            transition: all 0.3s ease;
+        }
+        
+        .team-member:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Search Modal */
+        .search-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 100px;
+        }
+        
+        .search-modal.active {
+            display: flex;
+        }
+        
+        .search-modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .dark .search-modal-content {
+            background: #1e293b;
+        }
+        
+        .search-input-container {
+            position: relative;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .dark .search-input-container {
+            border-bottom-color: #475569;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 20px 50px 20px 50px;
+            font-size: 16px;
+            background: transparent;
+            outline: none;
+        }
+        
+        .dark .search-input {
+            color: white;
+        }
+        
+        .search-input::placeholder {
+            color: #9ca3af;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+        
+        .search-close {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .search-close:hover {
+            color: #ef4444;
+        }
+        
+        .search-results {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        
+        .search-result-item {
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-bottom: 8px;
+        }
+        
+        .search-result-item:hover {
+            background-color: #f1f5f9;
+        }
+        
+        .dark .search-result-item:hover {
+            background-color: #334155;
+        }
+        
+        .search-result-type {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        
+        .search-result-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+        
+        .search-result-description {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .dark .search-result-description {
+            color: #9ca3af;
+        }
+        
+        .search-no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6b7280;
+        }
+        
+        .dark .search-no-results {
+            color: #9ca3af;
+        }
+        
+        .search-shortcuts {
+            display: flex;
+            gap: 8px;
+            padding: 12px 16px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .dark .search-shortcuts {
+            border-top-color: #475569;
+            color: #9ca3af;
+        }
+        
+        .shortcut-key {
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 11px;
+        }
+        
+        .dark .shortcut-key {
+            background: #334155;
+        }
+        
+        .search-loading {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .search-loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #e2e8f0;
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        
+        .highlight {
+            background-color: #fef3c7;
+            color: #92400e;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+        
+        .dark .highlight {
+            background-color: #92400e;
+            color: #fef3c7;
+        }
+
+        /* Reference Styles */
+        .reference-category {
+            margin-bottom: 2rem;
+        }
+        
+        .reference-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+        
+        .dark .reference-item {
+            background: #1e293b;
+            border-color: #475569;
+        }
+        
+        .reference-item:hover {
+            border-color: #3b82f6;
+            transform: translateX(4px);
+        }
+        
+        .reference-type {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+        
+        .reference-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .reference-link {
+            color: #3b82f6;
+            text-decoration: none;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .reference-link:hover {
+            text-decoration: underline;
+        }
+        
+        .dark .reference-link {
+            color: #60a5fa;
+        }
+
+        /* Listen Section Mobile Responsive Fixes */
+        @media (max-width: 640px) {
+            .listen-player-card {
+                flex-direction: column !important;
+                text-align: center;
+            }
+            
+            .listen-player-card .album-art {
+                margin: 0 auto 1rem !important;
+            }
+            
+            .listen-player-card .player-controls {
+                width: 100%;
+            }
+            
+            .listen-player-card .progress-bar-container {
+                margin: 1rem 0;
+            }
+            
+            .listen-player-card .controls-row {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1rem;
+            }
+            
+            .listen-player-card .play-pause-btn {
+                width: 56px !important;
+                height: 56px !important;
+            }
+            
+            .listen-player-card .volume-container {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .episode-list-item {
+                padding: 0.75rem !important;
+            }
+            
+            .episode-list-item .episode-info {
+                min-width: 0;
+            }
+            
+            .episode-list-item .episode-title {
+                font-size: 0.875rem !important;
+            }
+            
+            .episode-list-item .episode-desc {
+                font-size: 0.75rem !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
+    <!-- Sidebar Overlay (Mobile) -->
+    <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+        <div class="p-6">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-shield-halved text-white"></i>
+                </div>
+                <span class="logo-text text-xl font-bold text-gray-900 dark:text-white whitespace-nowrap">Awareness Hub</span>
+            </div>
+
+            <nav class="space-y-1">
+                <a href="#" onclick="switchSection('home', this); return false;" class="sidebar-item active flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors">
+                    <i class="fas fa-home w-5 flex-shrink-0 text-gray-700 dark:text-gray-300"></i>
+                    <span class="sidebar-text text-gray-700 dark:text-gray-300">Home</span>
+                </a>
+                <a href="#" onclick="switchSection('learn', this); return false;" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-book-open w-5 flex-shrink-0 text-gray-700 dark:text-gray-300"></i>
+                    <span class="sidebar-text text-gray-700 dark:text-gray-300">Learn</span>
+                </a>
+                <a href="#" onclick="switchSection('videos', this); return false;" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-video w-5 flex-shrink-0 text-gray-700 dark:text-gray-300"></i>
+                    <span class="sidebar-text text-gray-700 dark:text-gray-300">Videos</span>
+                </a>
+                <a href="#" onclick="switchSection('listen', this); return false;" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-headphones w-5 flex-shrink-0 text-gray-700 dark:text-gray-300"></i>
+                    <span class="sidebar-text text-gray-700 dark:text-gray-300">Listen</span>
+                </a>
+                <a href="#" onclick="switchSection('reference', this); return false;" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-book w-5 flex-shrink-0 text-gray-700 dark:text-gray-300"></i>
+                    <span class="sidebar-text text-gray-700 dark:text-gray-300">Reference</span>
+                </a>
+                <a href="#" onclick="switchSection('about', this); return false;" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-info-circle w-5 flex-shrink-0 text-gray-700 dark:text-gray-300"></i>
+                    <span class="sidebar-text text-gray-700 dark:text-gray-300">About</span>
+                </a>
+            </nav>
+        </div>
+        
+        <!-- Footer Info -->
+        <div class="p-6 mt-auto">
+            <div class="footer-text text-xs text-gray-400 text-center">
+                &copy; 2024 Digital Awareness Hub<br>
+                Secure • Private • Safe
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main id="mainContent" class="main-content">
+        <!-- Header -->
+        <header class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40">
+            <div class="px-4 sm:px-6 lg:px-8 py-4">
+                <div class="header-content">
+                    <!-- Left Side: Toggle + Title -->
+                    <div class="header-left">
+                        <!-- Toggle Sidebar Button -->
+                        <button onclick="toggleSidebar()" class="toggle-btn p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors flex-shrink-0">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                        
+                        <div class="header-title min-w-0">
+                            <h1 id="page-title" class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white truncate">Dashboard</h1>
+                            <p id="page-subtitle" class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5 truncate">Overview of your digital safety status</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Side: Search + Theme + Profile -->
+                    <div class="header-right">
+                        <!-- Search - Functional -->
+                        <div class="search-container relative hidden sm:block">
+                            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input type="text" id="headerSearchInput" placeholder="Search... (Press /)" onkeyup="handleSearchInput(event)" class="pl-10 pr-10 py-2 border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-48 lg:w-64 text-sm">
+                            <button onclick="openSearchModal()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                                <span class="shortcut-key">/</span>
+                            </button>
+                        </div>
+
+                        <!-- Mobile Search Button -->
+                        <button onclick="openSearchModal()" class="sm:hidden p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors">
+                            <i class="fas fa-search text-xl"></i>
+                        </button>
+
+                        <!-- Theme Toggle -->
+                        <button onclick="toggleTheme()" class="theme-toggle" aria-label="Toggle dark mode">
+                            <div class="theme-toggle-slider">
+                                <i class="fas fa-sun theme-toggle-icon sun"></i>
+                                <i class="fas fa-moon theme-toggle-icon moon"></i>
+                            </div>
+                        </button>
+
+                        <!-- User Profile -->
+                        <div class="relative">
+                            <button class="flex items-center gap-2 sm:gap-3 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors">
+                                <div class="w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center text-white font-semibold text-sm">
+                                    BC
+                                </div>
+                                <div class="text-left profile-name hidden lg:block">
+                                    <div class="text-xs sm:text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">Be Confidence</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">Member</div>
+                                </div>
+                                <i class="fas fa-chevron-down text-gray-400 text-xs sm:text-sm hide-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="p-4 sm:p-6 lg:p-8">
+            
+            <!-- HOME SECTION (DASHBOARD) -->
+            <div id="section-home" class="content-section active">
+                <!-- Refresh Button -->
+                <div class="flex justify-end mb-4">
+                    <button onclick="refreshDashboard()" class="refresh-btn flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        <i class="fas fa-sync-alt"></i>
+                        <span class="hidden sm:inline">Refresh</span>
+                    </button>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+                    <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl border border-gray-200 dark:border-gray-700 card-hover transition-all">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-50 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-shield-virus text-blue-600 dark:text-blue-400 text-lg sm:text-xl"></i>
+                            </div>
+                            <span id="securityScoreChange" class="text-green-500 text-xs sm:text-sm font-medium">+0%</span>
+                        </div>
+                        <h3 id="securityScore" class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">0%</h3>
+                        <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Security Score</p>
+                        <div class="mt-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                            <div id="securityScoreBar" class="bg-blue-600 h-1.5 rounded-full transition-all" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl border border-gray-200 dark:border-gray-700 card-hover transition-all">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-orange-50 dark:bg-orange-900/30 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-exclamation-triangle text-orange-600 dark:text-orange-400 text-lg sm:text-xl"></i>
+                            </div>
+                            <button onclick="clearThreats()" class="text-xs text-blue-600 dark:text-blue-400 hover:underline">Clear All</button>
+                        </div>
+                        <h3 id="threatsCount" class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">0</h3>
+                        <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Active Threats</p>
+                        <p id="threatsMessage" class="text-xs text-gray-400 dark:text-gray-500 mt-2">No active threats</p>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl border border-gray-200 dark:border-gray-700 card-hover transition-all">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-green-50 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-check-circle text-green-600 dark:text-green-400 text-lg sm:text-xl"></i>
+                            </div>
+                            <span id="modulesCompletedChange" class="text-green-500 text-xs sm:text-sm font-medium">+0</span>
+                        </div>
+                        <h3 id="modulesCompleted" class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">0/8</h3>
+                        <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Modules Finished</p>
+                        <div class="mt-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                            <div id="modulesProgress" class="bg-green-600 h-1.5 rounded-full transition-all" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Tips -->
+                <div id="dailyTipCard" class="tip-card bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-4 sm:p-8 text-white mb-6 sm:mb-8 relative">
+                    <button onclick="dismissTip()" class="tip-dismiss absolute top-4 right-4 text-white/70 hover:text-white transition-opacity">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
+                        <div>
+                            <h2 class="text-lg sm:text-2xl font-bold mb-2">Daily Safety Tip</h2>
+                            <p id="dailyTipText" class="text-xs sm:text-sm text-blue-100">Enable Two-Factor Authentication (2FA) on all your critical accounts. It adds an extra layer of security beyond just passwords.</p>
+                        </div>
+                        <button onclick="nextTip()" class="px-4 sm:px-6 py-2 sm:py-3 bg-white text-blue-600 font-semibold rounded-xl hover:bg-blue-50 transition-colors whitespace-nowrap text-sm sm:text-base">
+                            Next Tip
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                        <h2 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">Recent Activity</h2>
+                        <button onclick="clearActivity()" class="text-xs text-blue-600 dark:text-blue-400 hover:underline">Clear All</button>
+                    </div>
+                    <div id="activityList" class="divide-y divide-gray-200 dark:divide-gray-700">
+                        <!-- Activity items will be populated by JavaScript -->
+                    </div>
+                    <div id="noActivity" class="hidden p-8 text-center text-gray-500 dark:text-gray-400">
+                        <i class="fas fa-inbox text-4xl mb-3 opacity-50"></i>
+                        <p>No recent activity</p>
+                        <p class="text-xs mt-1">Complete modules to see your progress here</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LEARN SECTION -->
+            <div id="section-learn" class="content-section">
+                <!-- Module Overview -->
+                <div id="moduleOverview" class="module-content active">
+                    <div class="mb-6 sm:mb-8">
+                        <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">Learning Modules</h2>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Complete these modules to improve your digital security knowledge</p>
+                    </div>
+
+                    <!-- Progress Overview -->
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 mb-6 sm:mb-8">
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div class="flex items-center gap-4">
+                                <div class="relative w-16 h-16">
+                                    <svg class="progress-ring w-16 h-16" viewBox="0 0 36 36">
+                                        <path class="text-gray-200 dark:text-gray-700" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"/>
+                                        <path id="overallProgress" class="text-blue-600" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"/>
+                                    </svg>
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <span id="overallProgressText" class="text-sm font-bold text-gray-900 dark:text-white">0%</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Your Progress</h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400"><span id="completedModules">0</span> of <span id="totalModules">8</span> modules completed</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                    <span class="text-xs text-gray-500 dark:text-gray-400">Completed</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                                    <span class="text-xs text-gray-500 dark:text-gray-400">In Progress</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                                    <span class="text-xs text-gray-500 dark:text-gray-400">Not Started</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Module Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" id="moduleCards">
+                        <!-- Cards will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Module Content Viewer -->
+                <div id="moduleContent" class="module-content">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                        <!-- Module Header -->
+                        <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+                            <button onclick="closeModule()" class="back-btn text-gray-500 dark:text-gray-400 mb-4 flex items-center gap-2">
+                                <i class="fas fa-arrow-left"></i>
+                                <span class="text-sm">Back to Modules</span>
+                            </button>
+                            <div class="flex items-center gap-3 mb-2">
+                                <span id="moduleDifficulty" class="text-xs font-semibold px-2 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400">Beginner</span>
+                                <span id="moduleTime" class="text-xs text-gray-500 dark:text-gray-400">15 min</span>
+                            </div>
+                            <h2 id="moduleTitle" class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">Module Title</h2>
+                            <p id="moduleDescription" class="text-sm text-gray-500 dark:text-gray-400">Module description goes here</p>
+                            
+                            <!-- Progress Bar -->
+                            <div class="mt-4">
+                                <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
+                                    <span>Lesson <span id="currentLesson">1</span> of <span id="totalLessons">5</span></span>
+                                    <span id="lessonProgress">0%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                    <div id="lessonProgressBar" class="bg-blue-600 h-2 rounded-full transition-all" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Module Body -->
+                        <div class="p-4 sm:p-6">
+                            <div id="lessonContent">
+                                <!-- Lesson content will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Module Footer -->
+                        <div class="p-4 sm:p-6 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                            <button onclick="previousLesson()" id="prevLessonBtn" class="lesson-nav-btn px-4 sm:px-6 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 disabled:opacity-50">
+                                <i class="fas fa-arrow-left mr-2"></i>Previous
+                            </button>
+                            <button onclick="nextLesson()" id="nextLessonBtn" class="lesson-nav-btn px-4 sm:px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium text-white">
+                                Next<i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIDEOS SECTION - WITH GITHUB-HOSTED PHISHING VIDEO -->
+            <div id="section-videos" class="content-section">
+                <div class="mb-6 sm:mb-8">
+                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">Educational Videos</h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Learn about digital awareness through curated educational content</p>
+                </div>
+
+                <!-- Featured Video - GITHUB-HOSTED PHISHING VIDEO -->
+                <div class="video-card bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden mb-6 sm:mb-8">
+                    <div class="video-container">
+                        <video 
+                            controls 
+                            preload="metadata"
+                            class="w-full h-full"
+                            onerror="this.parentElement.innerHTML='<div class=\'video-placeholder\'><i class=\'fas fa-video-slash text-2xl mb-2\'></i><p>Video unavailable or format not supported</p><p class=\'text-xs mt-2\'>Try downloading from GitHub</p></div>'">
+                            <source src="https://github.com/user-attachments/assets/b69c5de0-259b-4524-a88a-64ebb9e0f2ae" type="video/mp4">
+                            <source src="https://github.com/user-attachments/assets/b69c5de0-259b-4524-a88a-64ebb9e0f2ae" type="video/webm">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="p-4 sm:p-6">
+                        <span class="video-category bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400">Featured</span>
+                        <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2">Phishing Awareness Training - How to Spot & Avoid Scams</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Learn to identify phishing attempts, recognize suspicious emails, and protect yourself from online scams.</p>
+                        <div class="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+                            <span><i class="fas fa-video mr-1"></i> GitHub Video</span>
+                            <span><i class="fas fa-calendar mr-1"></i> 2024</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                    <!-- Video 1: Password Security -->
+                    <div class="video-card bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                        <div class="video-container">
+                            <div class="video-placeholder">
+                                <i class="fas fa-video text-2xl mb-2"></i>
+                                <p>Password Security Video</p>
+                                <p class="text-xs mt-2">Content to be added</p>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <span class="video-category bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400">Security</span>
+                            <h3 class="text-base font-bold text-gray-900 dark:text-white mb-2">How to Create Strong Passwords</h3>
+                            <p class="text-xs text-gray-600 dark:text-gray-400 mb-3">Essential tips for creating and managing secure passwords.</p>
+                            <div class="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+                                <span><i class="fas fa-video mr-1"></i> Placeholder</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Video 2: Two-Factor Authentication -->
+                    <div class="video-card bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                        <div class="video-container">
+                            <div class="video-placeholder">
+                                <i class="fas fa-video text-2xl mb-2"></i>
+                                <p>2FA Setup Video</p>
+                                <p class="text-xs mt-2">Content to be added</p>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <span class="video-category bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">Authentication</span>
+                            <h3 class="text-base font-bold text-gray-900 dark:text-white mb-2">Two-Factor Authentication Explained</h3>
+                            <p class="text-xs text-gray-600 dark:text-gray-400 mb-3">Why 2FA is essential and how to set it up on your accounts.</p>
+                            <div class="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+                                <span><i class="fas fa-video mr-1"></i> Placeholder</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Video 3: Social Media Privacy -->
+                    <div class="video-card bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                        <div class="video-container">
+                            <div class="video-placeholder">
+                                <i class="fas fa-video text-2xl mb-2"></i>
+                                <p>Social Privacy Video</p>
+                                <p class="text-xs mt-2">Content to be added</p>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <span class="video-category bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400">Privacy</span>
+                            <h3 class="text-base font-bold text-gray-900 dark:text-white mb-2">Social Media Privacy Settings</h3>
+                            <p class="text-xs text-gray-600 dark:text-gray-400 mb-3">Protect your privacy on social media platforms.</p>
+                            <div class="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+                                <span><i class="fas fa-video mr-1"></i> Placeholder</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Video 4: Safe Browsing -->
+                    <div class="video-card bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                        <div class="video-container">
+                            <div class="video-placeholder">
+                                <i class="fas fa-video text-2xl mb-2"></i>
+                                <p>Safe Browsing Video</p>
+                                <p class="text-xs mt-2">Content to be added</p>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <span class="video-category bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400">Browsing</span>
+                            <h3 class="text-base font-bold text-gray-900 dark:text-white mb-2">How to Browse Safely Online</h3>
+                            <p class="text-xs text-gray-600 dark:text-gray-400 mb-3">Essential tips for safe web browsing and avoiding malicious sites.</p>
+                            <div class="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+                                <span><i class="fas fa-video mr-1"></i> Placeholder</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Video 5: Mobile Security -->
+                    <div class="video-card bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                        <div class="video-container">
+                            <div class="video-placeholder">
+                                <i class="fas fa-video text-2xl mb-2"></i>
+                                <p>Mobile Security Video</p>
+                                <p class="text-xs mt-2">Content to be added</p>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <span class="video-category bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400">Mobile</span>
+                            <h3 class="text-base font-bold text-gray-900 dark:text-white mb-2">Mobile Device Security</h3>
+                            <p class="text-xs text-gray-600 dark:text-gray-400 mb-3">How to keep your smartphone and tablet secure from threats.</p>
+                            <div class="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+                                <span><i class="fas fa-video mr-1"></i> Placeholder</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Video 6: Data Privacy -->
+                    <div class="video-card bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                        <div class="video-container">
+                            <div class="video-placeholder">
+                                <i class="fas fa-video text-2xl mb-2"></i>
+                                <p>Data Privacy Video</p>
+                                <p class="text-xs mt-2">Content to be added</p>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <span class="video-category bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400">Privacy</span>
+                            <h3 class="text-base font-bold text-gray-900 dark:text-white mb-2">Understanding Data Privacy</h3>
+                            <p class="text-xs text-gray-600 dark:text-gray-400 mb-3">Your rights and how to protect your personal data online.</p>
+                            <div class="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+                                <span><i class="fas fa-video mr-1"></i> Placeholder</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LISTEN SECTION - FIXED RESPONSIVE LAYOUT -->
+            <div id="section-listen" class="content-section">
+                <div class="max-w-4xl mx-auto space-y-4 sm:space-y-6">
+                    <!-- Main Player Card - Responsive -->
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 sm:p-6 listen-player-card">
+                        <div class="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+                            <!-- Album Art -->
+                            <div class="album-art w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-gray-900 to-gray-700 dark:from-gray-700 dark:to-gray-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                                <i class="fas fa-microphone-lines text-2xl sm:text-4xl text-white"></i>
+                            </div>
+                            
+                            <!-- Player Controls -->
+                            <div class="player-controls flex-1 w-full">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div>
+                                        <h3 id="currentEpisodeTitle" class="text-base sm:text-lg font-bold text-gray-900 dark:text-white">The Daily Secure Brief</h3>
+                                        <p id="currentEpisodeDesc" class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Episode 42: The Rise of AI Phishing Attacks</p>
+                                    </div>
+                                    <span id="liveBadge" class="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-1 rounded-full hidden">Live</span>
+                                </div>
+                                
+                                <!-- Progress Bar -->
+                                <div class="progress-bar-container w-full mb-3">
+                                    <input type="range" id="progressBar" min="0" max="100" value="0" class="w-full" oninput="seekAudio()">
+                                    <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                        <span id="currentTime">0:00</span>
+                                        <span id="totalTime">0:00</span>
+                                    </div>
+                                </div>
+
+                                <!-- Controls Row -->
+                                <div class="controls-row flex items-center justify-between">
+                                    <div class="flex items-center gap-2 sm:gap-4">
+                                        <button onclick="playPrevious()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-sm sm:text-base p-2" title="Previous">
+                                            <i class="fas fa-step-backward"></i>
+                                        </button>
+                                        
+                                        <button id="playPauseBtn" onclick="togglePlayPause()" class="play-pause-btn w-12 h-12 sm:w-14 sm:h-14 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center text-white shadow-lg transition-all transform hover:scale-105">
+                                            <i class="fas fa-play text-lg sm:text-xl" id="playPauseIcon"></i>
+                                        </button>
+                                        
+                                        <button onclick="playNext()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-sm sm:text-base p-2" title="Next">
+                                            <i class="fas fa-step-forward"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="flex items-center gap-3 sm:gap-4">
+                                        <div id="audioWave" class="audio-wave paused">
+                                            <div class="audio-bar"></div>
+                                            <div class="audio-bar"></div>
+                                            <div class="audio-bar"></div>
+                                            <div class="audio-bar"></div>
+                                            <div class="audio-bar"></div>
+                                        </div>
+                                        
+                                        <div class="volume-container hidden sm:flex">
+                                            <button onclick="toggleMute()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-sm">
+                                                <i class="fas fa-volume-up" id="volumeIcon"></i>
+                                            </button>
+                                            <input type="range" id="volumeSlider" min="0" max="100" value="80" class="volume-slider" oninput="setVolume()">
+                                        </div>
+                                        
+                                        <button onclick="toggleSpeed()" class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 font-medium px-2 py-1 border border-gray-200 dark:border-gray-600 rounded-lg" id="speedBtn">
+                                            1x
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Episode List - Mobile Optimized -->
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+                        <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                            <h2 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">All Episodes</h2>
+                            <span class="text-xs text-gray-500 dark:text-gray-400" id="episodeCount">5 episodes</span>
+                        </div>
+                        <div class="divide-y divide-gray-200 dark:divide-gray-700 max-h-96 overflow-y-auto" id="episodeList">
+                            <!-- Episodes will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REFERENCE SECTION -->
+            <div id="section-reference" class="content-section">
+                <div class="max-w-5xl mx-auto">
+                    <div class="mb-6 sm:mb-8">
+                        <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">References & Sources</h2>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">All content sources and references used in this platform</p>
+                    </div>
+
+                    <!-- Learning Modules References -->
+                    <div class="reference-category">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                            <i class="fas fa-book-open text-blue-600"></i>
+                            Learning Modules
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="reference-item">
+                                <span class="reference-type bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400">Module 1</span>
+                                <p class="reference-title">Spotting Phishing</p>
+                                <a href="https://www.cisa.gov/phishing" target="_blank" class="reference-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    CISA - Phishing Awareness
+                                </a>
+                            </div>
+                            <div class="reference-item">
+                                <span class="reference-type bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400">Module 2</span>
+                                <p class="reference-title">Password Hygiene</p>
+                                <a href="https://www.nist.gov/itl/applied-cybersecurity/nist-password-guidelines" target="_blank" class="reference-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    NIST Password Guidelines
+                                </a>
+                            </div>
+                            <div class="reference-item">
+                                <span class="reference-type bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400">Module 3</span>
+                                <p class="reference-title">Two-Factor Authentication</p>
+                                <a href="https://www.microsoft.com/en-us/security/business/security-101/what-is-two-factor-authentication-2fa" target="_blank" class="reference-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Microsoft - What is 2FA?
+                                </a>
+                            </div>
+                            <div class="reference-item">
+                                <span class="reference-type bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">Module 4</span>
+                                <p class="reference-title">Safe Browsing</p>
+                                <a href="https://www.google.com/safetycenter/" target="_blank" class="reference-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Google Safety Center
+                                </a>
+                            </div>
+                            <div class="reference-item">
+                                <span class="reference-type bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400">Module 5</span>
+                                <p class="reference-title">Social Media Security</p>
+                                <a href="https://www.consumer.ftc.gov/articles/how-protect-your-privacy-social-networking-sites" target="_blank" class="reference-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    FTC - Social Media Privacy
+                                </a>
+                            </div>
+                            <div class="reference-item">
+                                <span class="reference-type bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">Module 6</span>
+                                <p class="reference-title">Mobile Device Security</p>
+                                <a href="https://www.cisa.gov/mobile-device-security" target="_blank" class="reference-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    CISA - Mobile Security
+                                </a>
+                            </div>
+                            <div class="reference-item">
+                                <span class="reference-type bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400">Module 7</span>
+                                <p class="reference-title">Email Security</p>
+                                <a href="https://www.fcc.gov/consumers/guides/protecting-your-email-account" target="_blank" class="reference-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    FCC - Email Security Guide
+                                </a>
+                            </div>
+                            <div class="reference-item">
+                                <span class="reference-type bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">Module 8</span>
+                                <p class="reference-title">Data Privacy Rights</p>
+                                <a href="https://gdpr.eu/" target="_blank" class="reference-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    GDPR.eu - GDPR Guide
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Video References - WITH YOUR GITHUB VIDEO -->
+                    <div class="reference-category">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                            <i class="fas fa-video text-red-600"></i>
+                            Video Sources
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="reference-item">
+                                <span class="reference-type bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400">GitHub</span>
+                                <p class="reference-title">Phishing Awareness Training - How to Spot & Avoid Scams</p>
+                                <a href="https://github.com/user-attachments/assets/b69c5de0-259b-4524-a88a-64ebb9e0f2ae" target="_blank" class="reference-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    View on GitHub
+                                </a>
+                            </div>
+                            <div class="reference-item">
+                                <span class="reference-type bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400">Placeholder</span>
+                                <p class="reference-title">How to Create Strong Passwords</p>
+                                <span class="text-xs text-gray-400">Video to be added</span>
+                            </div>
+                            <div class="reference-item">
+                                <span class="reference-type bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">Placeholder</span>
+                                <p class="reference-title">Two-Factor Authentication Explained</p>
+                                <span class="text-xs text-gray-400">Video to be added</span>
+                            </div>
+                            <div class="reference-item">
+                                <span class="reference-type bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400">Placeholder</span>
+                                <p class="reference-title">Social Media Privacy Settings</p>
+                                <span class="text-xs text-gray-400">Video to be added</span>
+                            </div>
+                            <div class="reference-item">
+                                <span class="reference-type bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400">Placeholder</span>
+                                <p class="reference-title">How to Browse Safely Online</p>
+                                <span class="text-xs text-gray-400">Video to be added</span>
+                            </div>
+                            <div class="reference-item">
+                                <span class="reference-type bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400">Placeholder</span>
+                                <p class="reference-title">Mobile Device Security</p>
+                                <span class="text-xs text-gray-400">Video to be added</span>
+                            </div>
+                            <div class="reference-item">
+                                <span class="reference-type bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400">Placeholder</span>
+                                <p class="reference-title">Understanding Data Privacy</p>
+                                <span class="text-xs text-gray-400">Video to be added</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Audio/Podcast References -->
+                    <div class="reference-category">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                            <i class="fas fa-headphones text-purple-600"></i>
+                            Audio Sources
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="reference-item">
+                                <span class="reference-type bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400">Audio</span>
+                                <p class="reference-title">The Daily Secure Brief - Episode 42</p>
+                                <a href="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" target="_blank" class="reference-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Audio Source
+                                </a>
+                            </div>
+                            <div class="reference-item">
+                                <span class="reference-type bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400">Audio</span>
+                                <p class="reference-title">Securing Your Home Office</p>
+                                <a href="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" target="_blank" class="reference-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Audio Source
+                                </a>
+                            </div>
+                            <div class="reference-item">
+                                <span class="reference-type bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400">Audio</span>
+                                <p class="reference-title">Understanding Cookies</p>
+                                <a href="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" target="_blank" class="reference-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Audio Source
+                                </a>
+                            </div>
+                            <div class="reference-item">
+                                <span class="reference-type bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400">Audio</span>
+                                <p class="reference-title">Social Engineering Tactics</p>
+                                <a href="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" target="_blank" class="reference-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Audio Source
+                                </a>
+                            </div>
+                            <div class="reference-item">
+                                <span class="reference-type bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400">Audio</span>
+                                <p class="reference-title">Password Management 101</p>
+                                <a href="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" target="_blank" class="reference-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Audio Source
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- General References -->
+                    <div class="reference-category">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                            <i class="fas fa-link text-gray-600"></i>
+                            General Resources
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="reference-item">
+                                <span class="reference-type bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">Organization</span>
+                                <p class="reference-title">Cybersecurity & Infrastructure Security Agency (CISA)</p>
+                                <a href="https://www.cisa.gov/" target="_blank" class="reference-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Visit CISA
+                                </a>
+                            </div>
+                            <div class="reference-item">
+                                <span class="reference-type bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">Organization</span>
+                                <p class="reference-title">Federal Trade Commission (FTC)</p>
+                                <a href="https://www.ftc.gov/" target="_blank" class="reference-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Visit FTC
+                                </a>
+                            </div>
+                            <div class="reference-item">
+                                <span class="reference-type bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">Organization</span>
+                                <p class="reference-title">National Institute of Standards and Technology (NIST)</p>
+                                <a href="https://www.nist.gov/" target="_blank" class="reference-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    Visit NIST
+                                </a>
+                            </div>
+                            <div class="reference-item">
+                                <span class="reference-type bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">Guide</span>
+                                <p class="reference-title">OWASP Top 10 Security Risks</p>
+                                <a href="https://owasp.org/www-project-top-ten/" target="_blank" class="reference-link">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    View OWASP Top 10
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ABOUT SECTION -->
+            <div id="section-about" class="content-section">
+                <div class="max-w-5xl mx-auto bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 sm:p-8">
+                    <div class="text-center mb-6 sm:mb-8">
+                        <div class="w-16 h-16 sm:w-20 sm:h-20 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-shield-halved text-2xl sm:text-4xl text-white"></i>
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">About Digital Awareness Hub</h2>
+                        <p class="text-sm sm:text-base text-gray-500 dark:text-gray-400 mt-2">Empowering individuals to navigate the digital world safely.</p>
+                    </div>
+
+                    <div class="prose prose-blue dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 space-y-4 text-sm sm:text-base">
+                        <p>
+                            Welcome to the <strong>Digital Awareness Hub</strong>. Our mission is to provide accessible, actionable, and up-to-date resources on digital safety, privacy, and security.
+                        </p>
+                        <p>
+                            In an era where data is the new currency, understanding how to protect yourself online is not just a skill—it's a necessity. Whether you are a student, a professional, or simply a digital citizen, our platform offers tools to help you stay secure.
+                        </p>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
+                            <div class="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-xl">
+                                <h4 class="font-bold text-blue-900 dark:text-blue-300">Our Vision</h4>
+                                <p class="text-sm text-blue-700 dark:text-blue-400 mt-1">A world where everyone can use technology without fear.</p>
+                            </div>
+                            <div class="bg-green-50 dark:bg-green-900/30 p-4 rounded-xl">
+                                <h4 class="font-bold text-green-900 dark:text-green-300">Our Goal</h4>
+                                <p class="text-sm text-green-700 dark:text-green-400 mt-1">To reduce human-error security breaches by 50%.</p>
+                            </div>
+                        </div>
+
+                        <!-- Development Team Section -->
+                        <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 text-center">Developed By</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 text-center mb-6">Grade 12 Students</p>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                <!-- Team Member 1 -->
+                                <div class="team-member bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 text-center">
+                                    <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <i class="fas fa-user text-blue-600 dark:text-blue-400"></i>
+                                    </div>
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white">Renz Dalicano</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Developer</p>
+                                </div>
+                                <!-- Team Member 2 -->
+                                <div class="team-member bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 text-center">
+                                    <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <i class="fas fa-user text-purple-600 dark:text-purple-400"></i>
+                                    </div>
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white">Armando Calagos</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Developer</p>
+                                </div>
+                                <!-- Team Member 3 -->
+                                <div class="team-member bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 text-center">
+                                    <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <i class="fas fa-user text-green-600 dark:text-green-400"></i>
+                                    </div>
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white">Jerich Paisanos</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Developer</p>
+                                </div>
+                                <!-- Team Member 4 -->
+                                <div class="team-member bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 text-center">
+                                    <div class="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <i class="fas fa-user text-orange-600 dark:text-orange-400"></i>
+                                    </div>
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white">Reshner Pacoma</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Developer</p>
+                                </div>
+                                <!-- Team Member 5 -->
+                                <div class="team-member bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 text-center">
+                                    <div class="w-12 h-12 bg-pink-100 dark:bg-pink-900/30 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <i class="fas fa-user text-pink-600 dark:text-pink-400"></i>
+                                    </div>
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white">Limar Sayson</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Developer</p>
+                                </div>
+                                <!-- Team Member 6 -->
+                                <div class="team-member bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 text-center">
+                                    <div class="w-12 h-12 bg-teal-100 dark:bg-teal-900/30 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <i class="fas fa-user text-teal-600 dark:text-teal-400"></i>
+                                    </div>
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white">Rodel Deguino</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Developer</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3 class="text-lg font-bold text-gray-900 dark:text-white pt-8">Contact Us</h3>
+                        <p>Have questions or suggestions? Reach out to our team.</p>
+                        <div class="flex gap-4 mt-4">
+                            <a href="#" class="text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 text-xl"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="text-gray-400 hover:text-blue-800 dark:hover:text-blue-400 text-xl"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" class="text-gray-400 hover:text-pink-600 dark:hover:text-pink-400 text-xl"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="text-gray-400 hover:text-red-600 dark:hover:text-red-400 text-xl"><i class="fas fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Search Modal -->
+    <div id="searchModal" class="search-modal" onclick="closeSearchModal(event)">
+        <div class="search-modal-content" onclick="event.stopPropagation()">
+            <div class="search-input-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" class="search-input" placeholder="Search modules, videos, podcasts..." onkeyup="performSearch()" autofocus>
+                <i class="fas fa-times search-close" onclick="closeSearchModal()"></i>
+            </div>
+            <div id="searchResults" class="search-results">
+                <div class="search-no-results">
+                    <i class="fas fa-search text-4xl mb-4 opacity-50"></i>
+                    <p>Start typing to search...</p>
+                </div>
+            </div>
+            <div class="search-shortcuts">
+                <span><span class="shortcut-key">↑↓</span> Navigate</span>
+                <span><span class="shortcut-key">↵</span> Select</span>
+                <span><span class="shortcut-key">ESC</span> Close</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+            <i class="fas fa-info text-blue-600 dark:text-blue-400 text-sm"></i>
+        </div>
+        <div>
+            <p class="text-sm font-medium text-gray-900 dark:text-white" id="toastMessage">Notification</p>
+        </div>
+    </div>
+
+    <!-- Hidden Audio Element -->
+    <audio id="audioPlayer"></audio>
+
+    <script>
+        // ==================== SEARCH FUNCTIONALITY ====================
+        let searchResults = [];
+        let selectedResultIndex = -1;
+
+        // Open search modal
+        function openSearchModal() {
+            const modal = document.getElementById('searchModal');
+            const input = document.getElementById('searchInput');
+            modal.classList.add('active');
+            input.value = '';
+            input.focus();
+            document.getElementById('searchResults').innerHTML = `
+                <div class="search-no-results">
+                    <i class="fas fa-search text-4xl mb-4 opacity-50"></i>
+                    <p>Start typing to search...</p>
+                </div>
+            `;
+            selectedResultIndex = -1;
+        }
+
+        // Close search modal
+        function closeSearchModal(event) {
+            if (!event || event.target === document.getElementById('searchModal')) {
+                document.getElementById('searchModal').classList.remove('active');
+                document.getElementById('searchInput').value = '';
+                document.getElementById('searchResults').innerHTML = '';
+            }
+        }
+
+        // Handle search input
+        function handleSearchInput(event) {
+            if (event.key === '/' && event.target.tagName !== 'INPUT') {
+                event.preventDefault();
+                openSearchModal();
+            }
+        }
+
+        // Perform search
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const resultsContainer = document.getElementById('searchResults');
+            
+            if (query.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="search-no-results">
+                        <i class="fas fa-search text-4xl mb-4 opacity-50"></i>
+                        <p>Start typing to search...</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            if (query.length < 2) {
+                resultsContainer.innerHTML = `
+                    <div class="search-no-results">
+                        <p>Please enter at least 2 characters</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Show loading
+            resultsContainer.innerHTML = `
+                <div class="search-loading">
+                    <div class="search-loading-spinner"></div>
+                    <p>Searching...</p>
+                </div>
+            `;
+            
+            // Simulate search delay
+            setTimeout(() => {
+                searchResults = [];
+                
+                // Search modules
+                modules.forEach((module, index) => {
+                    if (module.title.toLowerCase().includes(query) || 
+                        module.description.toLowerCase().includes(query)) {
+                        searchResults.push({
+                            type: 'module',
+                            title: highlightText(module.title, query),
+                            description: highlightText(module.description, query),
+                            icon: module.icon,
+                            color: module.color,
+                            action: () => {
+                                switchSection('learn', document.querySelectorAll('.sidebar-item')[1]);
+                                setTimeout(() => openModule(index), 100);
+                            }
+                        });
+                    }
+                });
+                
+                // Search videos - WITH YOUR GITHUB VIDEO
+                const videos = [
+                    { title: 'Phishing Awareness Training - How to Spot & Avoid Scams', description: 'Learn to identify phishing attempts, recognize suspicious emails', type: 'video', category: 'Featured' },
+                    { title: 'How to Create Strong Passwords', description: 'Essential tips for creating and managing secure passwords', type: 'video', category: 'Security' },
+                    { title: 'Two-Factor Authentication Explained', description: 'Why 2FA is essential and how to set it up', type: 'video', category: 'Authentication' },
+                    { title: 'Social Media Privacy Settings', description: 'Protect your privacy on social media platforms', type: 'video', category: 'Privacy' },
+                    { title: 'How to Browse Safely Online', description: 'Essential tips for safe web browsing', type: 'video', category: 'Browsing' },
+                    { title: 'Mobile Device Security', description: 'How to keep your smartphone secure', type: 'video', category: 'Mobile' },
+                    { title: 'Understanding Data Privacy', description: 'Your rights and how to protect personal data', type: 'video', category: 'Privacy' }
+                ];
+                
+                videos.forEach((video, index) => {
+                    if (video.title.toLowerCase().includes(query) || 
+                        video.description.toLowerCase().includes(query)) {
+                        searchResults.push({
+                            type: 'video',
+                            title: highlightText(video.title, query),
+                            description: highlightText(video.description, query),
+                            icon: 'fa-video',
+                            color: getVideoCategoryColor(video.category),
+                            action: () => {
+                                switchSection('videos', document.querySelectorAll('.sidebar-item')[2]);
+                                setTimeout(() => {
+                                    document.querySelectorAll('.video-card')[index]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                }, 100);
+                            }
+                        });
+                    }
+                });
+                
+                // Search episodes
+                episodes.forEach((episode, index) => {
+                    if (episode.title.toLowerCase().includes(query) || 
+                        episode.description.toLowerCase().includes(query)) {
+                        searchResults.push({
+                            type: 'podcast',
+                            title: highlightText(episode.title, query),
+                            description: highlightText(episode.description, query),
+                            icon: 'fa-podcast',
+                            color: 'blue',
+                            action: () => {
+                                switchSection('listen', document.querySelectorAll('.sidebar-item')[3]);
+                                setTimeout(() => loadEpisode(index, true), 100); // Pass true to show toast
+                            }
+                        });
+                    }
+                });
+                
+                // Display results
+                if (searchResults.length === 0) {
+                    resultsContainer.innerHTML = `
+                        <div class="search-no-results">
+                            <i class="fas fa-search text-4xl mb-4 opacity-50"></i>
+                            <p>No results found for "${query}"</p>
+                            <p class="text-xs mt-2">Try different keywords</p>
+                        </div>
+                    `;
+                } else {
+                    resultsContainer.innerHTML = searchResults.map((result, index) => `
+                        <div class="search-result-item" onclick="selectSearchResult(${index})" data-index="${index}">
+                            <div class="search-result-type" style="color: ${getTypeColor(result.type)}">
+                                <i class="fas ${result.icon} mr-2"></i>${result.type}
+                            </div>
+                            <div class="search-result-title">${result.title}</div>
+                            <div class="search-result-description">${result.description}</div>
+                        </div>
+                    `).join('');
+                }
+                
+                selectedResultIndex = -1;
+            }, 300);
+        }
+
+        // Highlight search text
+        function highlightText(text, query) {
+            const regex = new RegExp(`(${query})`, 'gi');
+            return text.replace(regex, '<span class="highlight">$1</span>');
+        }
+
+        // Get type color
+        function getTypeColor(type) {
+            const colors = {
+                module: '#3b82f6',
+                video: '#ef4444',
+                podcast: '#8b5cf6'
+            };
+            return colors[type] || '#6b7280';
+        }
+
+        // Get video category color
+        function getVideoCategoryColor(category) {
+            const colors = {
+                'Featured': 'red',
+                'Security': 'blue',
+                'Authentication': 'green',
+                'Privacy': 'purple',
+                'Browsing': 'orange',
+                'Mobile': 'teal'
+            };
+            return colors[category] || 'blue';
+        }
+
+        // Select search result
+        function selectSearchResult(index) {
+            if (searchResults[index]) {
+                searchResults[index].action();
+                closeSearchModal();
+                showToast(`Opened: ${searchResults[index].title.replace(/<[^>]*>/g, '')}`);
+            }
+        }
+
+        // Keyboard navigation for search
+        document.addEventListener('keydown', (e) => {
+            const modal = document.getElementById('searchModal');
+            if (!modal.classList.contains('active')) {
+                if (e.key === '/' && e.target.tagName !== 'INPUT') {
+                    e.preventDefault();
+                    openSearchModal();
+                }
+                return;
+            }
+            
+            const results = document.querySelectorAll('.search-result-item');
+            
+            if (e.key === 'Escape') {
+                closeSearchModal();
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (selectedResultIndex < results.length - 1) {
+                    selectedResultIndex++;
+                    updateSelectedResult(results);
+                }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (selectedResultIndex > 0) {
+                    selectedResultIndex--;
+                    updateSelectedResult(results);
+                }
+            } else if (e.key === 'Enter' && selectedResultIndex >= 0) {
+                e.preventDefault();
+                selectSearchResult(selectedResultIndex);
+            }
+        });
+
+        // Update selected result styling
+        function updateSelectedResult(results) {
+            results.forEach((result, index) => {
+                if (index === selectedResultIndex) {
+                    result.style.backgroundColor = '#eff6ff';
+                } else {
+                    result.style.backgroundColor = '';
+                }
+            });
+            
+            if (selectedResultIndex >= 0) {
+                results[selectedResultIndex]?.scrollIntoView({ block: 'nearest' });
+            }
+        }
+
+        // ==================== DASHBOARD DATA ====================
+        const dailyTips = [
+            "Enable Two-Factor Authentication (2FA) on all your critical accounts. It adds an extra layer of security beyond just passwords.",
+            "Use a password manager to generate and store unique, strong passwords for each of your accounts.",
+            "Keep your software and operating system updated to protect against known vulnerabilities.",
+            "Be cautious of unsolicited emails and messages. Never click on suspicious links or download unexpected attachments.",
+            "Use a VPN when connecting to public Wi-Fi networks to encrypt your internet traffic.",
+            "Regularly backup your important data to an external drive or cloud storage service.",
+            "Review your social media privacy settings regularly to control who can see your information.",
+            "Use biometric authentication (fingerprint, face recognition) when available for added security."
+        ];
+
+        let currentTipIndex = 0;
+        let dashboardData = {
+            securityScore: 0,
+            threats: [],
+            activity: [],
+            lastUpdated: null
+        };
+
+        // Load dashboard data from localStorage
+        function loadDashboardData() {
+            const saved = localStorage.getItem('dashboardData');
+            if (saved) {
+                dashboardData = JSON.parse(saved);
+            }
+        }
+
+        // Save dashboard data to localStorage
+        function saveDashboardData() {
+            dashboardData.lastUpdated = new Date().toISOString();
+            localStorage.setItem('dashboardData', JSON.stringify(dashboardData));
+        }
+
+        // Calculate security score based on completed modules
+        function calculateSecurityScore() {
+            const completedCount = modules.filter(m => m.completed).length;
+            const baseScore = (completedCount / modules.length) * 80;
+            
+            // Add bonus for activity
+            const activityBonus = Math.min(dashboardData.activity.length * 2, 20);
+            
+            return Math.min(Math.round(baseScore + activityBonus), 100);
+        }
+
+        // Update dashboard stats
+        function updateDashboardStats() {
+            const securityScore = calculateSecurityScore();
+            const completedCount = modules.filter(m => m.completed).length;
+            
+            // Animate score change
+            const prevScore = dashboardData.securityScore;
+            const scoreChange = securityScore - prevScore;
+            
+            document.getElementById('securityScore').textContent = `${securityScore}%`;
+            document.getElementById('securityScoreBar').style.width = `${securityScore}%`;
+            
+            const scoreChangeEl = document.getElementById('securityScoreChange');
+            if (scoreChange > 0) {
+                scoreChangeEl.textContent = `+${scoreChange}%`;
+                scoreChangeEl.className = 'text-green-500 text-xs sm:text-sm font-medium';
+            } else if (scoreChange < 0) {
+                scoreChangeEl.textContent = `${scoreChange}%`;
+                scoreChangeEl.className = 'text-red-500 text-xs sm:text-sm font-medium';
+            } else {
+                scoreChangeEl.textContent = '0%';
+                scoreChangeEl.className = 'text-gray-400 text-xs sm:text-sm font-medium';
+            }
+            
+            // Update modules completed
+            document.getElementById('modulesCompleted').textContent = `${completedCount}/8`;
+            document.getElementById('modulesProgress').style.width = `${(completedCount / 8) * 100}%`;
+            
+            const modulesChangeEl = document.getElementById('modulesCompletedChange');
+            const prevCompleted = dashboardData.completedModules || 0;
+            const modulesChange = completedCount - prevCompleted;
+            
+            if (modulesChange > 0) {
+                modulesChangeEl.textContent = `+${modulesChange}`;
+                modulesChangeEl.className = 'text-green-500 text-xs sm:text-sm font-medium';
+            } else if (modulesChange < 0) {
+                modulesChangeEl.textContent = `${modulesChange}`;
+                modulesChangeEl.className = 'text-red-500 text-xs sm:text-sm font-medium';
+            } else {
+                modulesChangeEl.textContent = '+0';
+                modulesChangeEl.className = 'text-gray-400 text-xs sm:text-sm font-medium';
+            }
+            
+            // Update threats
+            updateThreats();
+            
+            // Save updated data
+            dashboardData.securityScore = securityScore;
+            dashboardData.completedModules = completedCount;
+            saveDashboardData();
+        }
+
+        // Update threats display
+        function updateThreats() {
+            const threatsCount = dashboardData.threats.length;
+            document.getElementById('threatsCount').textContent = threatsCount;
+            
+            const threatsMessage = document.getElementById('threatsMessage');
+            if (threatsCount === 0) {
+                threatsMessage.textContent = 'No active threats';
+                threatsMessage.className = 'text-xs text-green-500 dark:text-green-400 mt-2';
+            } else if (threatsCount <= 2) {
+                threatsMessage.textContent = 'Low risk - review recommended';
+                threatsMessage.className = 'text-xs text-orange-500 dark:text-orange-400 mt-2';
+            } else {
+                threatsMessage.textContent = 'High risk - immediate action needed';
+                threatsMessage.className = 'text-xs text-red-500 dark:text-red-400 mt-2';
+            }
+        }
+
+        // Add activity to dashboard
+        function addActivity(type, message, icon, color) {
+            const activity = {
+                id: Date.now(),
+                type,
+                message,
+                icon,
+                color,
+                timestamp: new Date().toISOString()
+            };
+            
+            dashboardData.activity.unshift(activity);
+            
+            // Keep only last 20 activities
+            if (dashboardData.activity.length > 20) {
+                dashboardData.activity = dashboardData.activity.slice(0, 20);
+            }
+            
+            saveDashboardData();
+            renderActivity();
+        }
+
+        // Render activity list
+        function renderActivity() {
+            const activityList = document.getElementById('activityList');
+            const noActivity = document.getElementById('noActivity');
+            
+            if (dashboardData.activity.length === 0) {
+                activityList.innerHTML = '';
+                noActivity.classList.remove('hidden');
+                return;
+            }
+            
+            noActivity.classList.add('hidden');
+            
+            activityList.innerHTML = dashboardData.activity.map(item => {
+                const time = getTimeAgo(item.timestamp);
+                const colorClasses = {
+                    green: 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400',
+                    blue: 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400',
+                    orange: 'bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400',
+                    purple: 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400'
+                };
+                
+                return `
+                    <div class="activity-item p-3 sm:p-4 flex items-center gap-3 sm:gap-4 hover:bg-gray-50 dark:hover:bg-gray-700/50" data-id="${item.id}">
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full ${colorClasses[item.color]} flex items-center justify-center flex-shrink-0">
+                            <i class="fas ${item.icon} text-xs sm:text-sm"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs sm:text-sm font-medium text-gray-900 dark:text-white truncate">${item.message}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">${time}</p>
+                        </div>
+                        <button onclick="dismissActivity(${item.id})" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xs sm:text-sm flex-shrink-0">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Get time ago string
+        function getTimeAgo(timestamp) {
+            const now = new Date();
+            const past = new Date(timestamp);
+            const diffMs = now - past;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
+            if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+            if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+            
+            return past.toLocaleDateString();
+        }
+
+        // Dismiss activity item
+        function dismissActivity(id) {
+            const item = document.querySelector(`.activity-item[data-id="${id}"]`);
+            if (item) {
+                item.classList.add('dismissed');
+                setTimeout(() => {
+                    dashboardData.activity = dashboardData.activity.filter(a => a.id !== id);
+                    saveDashboardData();
+                    renderActivity();
+                }, 300);
+            }
+        }
+
+        // Clear all activity
+        function clearActivity() {
+            dashboardData.activity = [];
+            saveDashboardData();
+            renderActivity();
+            showToast('Activity history cleared');
+        }
+
+        // Clear threats
+        function clearThreats() {
+            dashboardData.threats = [];
+            saveDashboardData();
+            updateThreats();
+            showToast('All threats cleared');
+        }
+
+        // Refresh dashboard
+        function refreshDashboard() {
+            const btn = document.querySelector('.refresh-btn');
+            btn.classList.add('spinning');
+            
+            setTimeout(() => {
+                updateDashboardStats();
+                renderActivity();
+                btn.classList.remove('spinning');
+                showToast('Dashboard refreshed');
+            }, 500);
+        }
+
+        // Daily tip functions
+        function loadTip() {
+            const savedTipIndex = localStorage.getItem('currentTipIndex');
+            if (savedTipIndex) {
+                currentTipIndex = parseInt(savedTipIndex);
+            }
+            document.getElementById('dailyTipText').textContent = dailyTips[currentTipIndex];
+        }
+
+        function nextTip() {
+            currentTipIndex = (currentTipIndex + 1) % dailyTips.length;
+            localStorage.setItem('currentTipIndex', currentTipIndex);
+            
+            const tipText = document.getElementById('dailyTipText');
+            tipText.style.opacity = '0';
+            
+            setTimeout(() => {
+                tipText.textContent = dailyTips[currentTipIndex];
+                tipText.style.opacity = '1';
+            }, 300);
+        }
+
+        function dismissTip() {
+            const tipCard = document.getElementById('dailyTipCard');
+            tipCard.style.display = 'none';
+            localStorage.setItem('tipDismissed', 'true');
+        }
+
+        // ==================== MODULE DATA (8 MODULES) ====================
+        const modulesData = [
+            {
+                id: 1,
+                title: 'Spotting Phishing',
+                description: 'Learn how to identify suspicious emails and links before you click.',
+                difficulty: 'Beginner',
+                time: '15 min',
+                color: 'blue',
+                icon: 'fa-user-secret',
+                lessons: [
+                    {
+                        type: 'content',
+                        title: 'What is Phishing?',
+                        content: `
+                            <div class="space-y-4">
+                                <p class="text-gray-700 dark:text-gray-300">Phishing is a type of cyber attack where attackers impersonate legitimate organizations to steal sensitive information like passwords, credit card numbers, or personal data.</p>
+                                <div class="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-500 p-4 rounded-r-lg">
+                                    <p class="text-sm text-yellow-800 dark:text-yellow-300"><strong>Key Point:</strong> Phishing attacks have increased by 61% in the past year alone.</p>
+                                </div>
+                                <h4 class="font-semibold text-gray-900 dark:text-white mt-4">Common Phishing Tactics:</h4>
+                                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+                                    <li>Urgent requests for immediate action</li>
+                                    <li>Suspicious sender email addresses</li>
+                                    <li>Generic greetings like "Dear Customer"</li>
+                                    <li>Requests for sensitive information</li>
+                                    <li>Suspicious links or attachments</li>
+                                </ul>
+                            </div>
+                        `
+                    },
+                    {
+                        type: 'content',
+                        title: 'Red Flags to Watch For',
+                        content: `
+                            <div class="space-y-4">
+                                <p class="text-gray-700 dark:text-gray-300">Learn to spot the warning signs of phishing attempts before it's too late.</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                                    <div class="bg-red-50 dark:bg-red-900/20 p-4 rounded-xl">
+                                        <h5 class="font-semibold text-red-800 dark:text-red-300 mb-2"><i class="fas fa-exclamation-triangle mr-2"></i>Email Red Flags</h5>
+                                        <ul class="text-sm text-red-700 dark:text-red-400 space-y-1">
+                                            <li>• Misspelled domain names</li>
+                                            <li>• Unusual sender addresses</li>
+                                            <li>• Poor grammar and spelling</li>
+                                        </ul>
+                                    </div>
+                                    <div class="bg-red-50 dark:bg-red-900/20 p-4 rounded-xl">
+                                        <h5 class="font-semibold text-red-800 dark:text-red-300 mb-2"><i class="fas fa-link mr-2"></i>Link Red Flags</h5>
+                                        <ul class="text-sm text-red-700 dark:text-red-400 space-y-1">
+                                            <li>• Hover to reveal different URL</li>
+                                            <li>• Shortened URLs from unknown sources</li>
+                                            <li>• HTTP instead of HTTPS</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        `
+                    },
+                    {
+                        type: 'quiz',
+                        title: 'Test Your Knowledge',
+                        question: 'You receive an email from "support@paypa1.com" asking you to verify your account. What should you do?',
+                        options: [
+                            { text: 'Click the link and verify immediately', correct: false },
+                            { text: 'Check the sender address carefully and report as phishing', correct: true },
+                            { text: 'Forward it to your friends to warn them', correct: false },
+                            { text: 'Reply asking if it\'s legitimate', correct: false }
+                        ],
+                        explanation: 'Great job! The sender address uses "1" instead of "l" in PayPal - a common phishing tactic. Always verify sender addresses and report suspicious emails.'
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: 'Password Hygiene',
+                description: 'Create strong, unique passwords and manage them securely.',
+                difficulty: 'Intermediate',
+                time: '20 min',
+                color: 'purple',
+                icon: 'fa-key',
+                lessons: [
+                    {
+                        type: 'content',
+                        title: 'Why Passwords Matter',
+                        content: `
+                            <div class="space-y-4">
+                                <p class="text-gray-700 dark:text-gray-300">Weak passwords are one of the leading causes of security breaches. Learn how to create passwords that actually protect you.</p>
+                                <div class="bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 p-4 rounded-r-lg">
+                                    <p class="text-sm text-green-800 dark:text-green-300"><strong>Statistic:</strong> 81% of hacking-related breaches leverage stolen or weak passwords.</p>
+                                </div>
+                            </div>
+                        `
+                    },
+                    {
+                        type: 'quiz',
+                        title: 'Password Strength Quiz',
+                        question: 'Which of these passwords is the strongest?',
+                        options: [
+                            { text: 'Password123', correct: false },
+                            { text: 'John1990', correct: false },
+                            { text: 'Tr0ub4dor&3', correct: true },
+                            { text: 'qwerty', correct: false }
+                        ],
+                        explanation: 'Correct! "Tr0ub4dor&3" uses a mix of uppercase, lowercase, numbers, and special characters, making it much harder to crack.'
+                    }
+                ]
+            },
+            {
+                id: 3,
+                title: 'Two-Factor Authentication',
+                description: 'Add an extra layer of security to all your important accounts.',
+                difficulty: 'Beginner',
+                time: '12 min',
+                color: 'blue',
+                icon: 'fa-shield-alt',
+                lessons: [
+                    {
+                        type: 'content',
+                        title: 'What is 2FA?',
+                        content: `
+                            <div class="space-y-4">
+                                <p class="text-gray-700 dark:text-gray-300">Two-Factor Authentication (2FA) requires two forms of verification before granting access to your account - something you know (password) and something you have (phone, token, etc.).</p>
+                                <div class="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-4 rounded-r-lg">
+                                    <p class="text-sm text-blue-800 dark:text-blue-300"><strong>Key Point:</strong> 2FA blocks 99.9% of automated attacks on accounts.</p>
+                                </div>
+                                <h4 class="font-semibold text-gray-900 dark:text-white mt-4">Types of 2FA:</h4>
+                                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+                                    <li>SMS codes (text messages)</li>
+                                    <li>Authenticator apps (Google Authenticator, Authy)</li>
+                                    <li>Hardware tokens (YubiKey)</li>
+                                    <li>Biometric verification (fingerprint, face)</li>
+                                </ul>
+                            </div>
+                        `
+                    },
+                    {
+                        type: 'quiz',
+                        title: '2FA Knowledge Check',
+                        question: 'Which 2FA method is considered the most secure?',
+                        options: [
+                            { text: 'SMS text messages', correct: false },
+                            { text: 'Email codes', correct: false },
+                            { text: 'Authenticator apps or hardware tokens', correct: true },
+                            { text: 'Security questions', correct: false }
+                        ],
+                        explanation: 'Correct! Authenticator apps and hardware tokens are more secure than SMS because they\'re not vulnerable to SIM swapping attacks.'
+                    }
+                ]
+            },
+            {
+                id: 4,
+                title: 'Safe Browsing',
+                description: 'Navigate the web safely and avoid malicious websites.',
+                difficulty: 'Beginner',
+                time: '18 min',
+                color: 'green',
+                icon: 'fa-globe',
+                lessons: [
+                    {
+                        type: 'content',
+                        title: 'Identifying Safe Websites',
+                        content: `
+                            <div class="space-y-4">
+                                <p class="text-gray-700 dark:text-gray-300">Learn to identify legitimate websites and avoid malicious ones that could steal your information or infect your device.</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                                    <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-xl">
+                                        <h5 class="font-semibold text-green-800 dark:text-green-300 mb-2"><i class="fas fa-check-circle mr-2"></i>Safe Signs</h5>
+                                        <ul class="text-sm text-green-700 dark:text-green-400 space-y-1">
+                                            <li>• HTTPS in the URL</li>
+                                            <li>• Padlock icon in browser</li>
+                                            <li>• Known domain name</li>
+                                            <li>• Professional design</li>
+                                        </ul>
+                                    </div>
+                                    <div class="bg-red-50 dark:bg-red-900/20 p-4 rounded-xl">
+                                        <h5 class="font-semibold text-red-800 dark:text-red-300 mb-2"><i class="fas fa-times-circle mr-2"></i>Warning Signs</h5>
+                                        <ul class="text-sm text-red-700 dark:text-red-400 space-y-1">
+                                            <li>• HTTP only (no S)</li>
+                                            <li>• Strange domain names</li>
+                                            <li>• Too many pop-ups</li>
+                                            <li>• Urgent warnings</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        `
+                    },
+                    {
+                        type: 'quiz',
+                        title: 'Website Safety Quiz',
+                        question: 'What does the "S" in HTTPS stand for?',
+                        options: [
+                            { text: 'Standard', correct: false },
+                            { text: 'Secure', correct: true },
+                            { text: 'System', correct: false },
+                            { text: 'Server', correct: false }
+                        ],
+                        explanation: 'Correct! HTTPS stands for HyperText Transfer Protocol Secure. The "S" means your connection is encrypted.'
+                    }
+                ]
+            },
+            {
+                id: 5,
+                title: 'Social Media Security',
+                description: 'Protect your privacy and accounts on social platforms.',
+                difficulty: 'Intermediate',
+                time: '22 min',
+                color: 'purple',
+                icon: 'fa-users',
+                lessons: [
+                    {
+                        type: 'content',
+                        title: 'Privacy Settings',
+                        content: `
+                            <div class="space-y-4">
+                                <p class="text-gray-700 dark:text-gray-300">Social media platforms collect vast amounts of data. Learn to control what you share and who can see it.</p>
+                                <div class="bg-purple-50 dark:bg-purple-900/20 border-l-4 border-purple-500 p-4 rounded-r-lg">
+                                    <p class="text-sm text-purple-800 dark:text-purple-300"><strong>Tip:</strong> Review your privacy settings every 3-6 months as platforms often update their policies.</p>
+                                </div>
+                                <h4 class="font-semibold text-gray-900 dark:text-white mt-4">Key Settings to Check:</h4>
+                                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+                                    <li>Who can see your posts</li>
+                                    <li>Who can friend/follow you</li>
+                                    <li>Location sharing settings</li>
+                                    <li>Tag approval settings</li>
+                                    <li>Ad personalization</li>
+                                </ul>
+                            </div>
+                        `
+                    },
+                    {
+                        type: 'quiz',
+                        title: 'Social Media Safety',
+                        question: 'What should you do before accepting a friend request from someone you don\'t know?',
+                        options: [
+                            { text: 'Accept immediately', correct: false },
+                            { text: 'Check their profile and mutual friends first', correct: true },
+                            { text: 'Message them asking who they are', correct: false },
+                            { text: 'Ignore all unknown requests', correct: false }
+                        ],
+                        explanation: 'Correct! Always verify unknown friend requests by checking their profile, mutual friends, and how they found you.'
+                    }
+                ]
+            },
+            {
+                id: 6,
+                title: 'Mobile Device Security',
+                description: 'Keep your smartphone and tablet secure from threats.',
+                difficulty: 'Intermediate',
+                time: '20 min',
+                color: 'green',
+                icon: 'fa-mobile-alt',
+                lessons: [
+                    {
+                        type: 'content',
+                        title: 'Mobile Security Basics',
+                        content: `
+                            <div class="space-y-4">
+                                <p class="text-gray-700 dark:text-gray-300">Your mobile device contains sensitive data. Protect it with these essential security practices.</p>
+                                <div class="bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 p-4 rounded-r-lg">
+                                    <p class="text-sm text-green-800 dark:text-green-300"><strong>Statistic:</strong> 70% of cyber attacks target mobile devices.</p>
+                                </div>
+                                <h4 class="font-semibold text-gray-900 dark:text-white mt-4">Essential Protections:</h4>
+                                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+                                    <li>Use screen lock (PIN, pattern, biometric)</li>
+                                    <li>Keep OS and apps updated</li>
+                                    <li>Only download from official app stores</li>
+                                    <li>Enable Find My Device</li>
+                                    <li>Use mobile security apps</li>
+                                </ul>
+                            </div>
+                        `
+                    },
+                    {
+                        type: 'quiz',
+                        title: 'Mobile Security Quiz',
+                        question: 'What should you do if you lose your phone?',
+                        options: [
+                            { text: 'Buy a new one immediately', correct: false },
+                            { text: 'Use Find My Device to locate or wipe it', correct: true },
+                            { text: 'Wait to see if someone returns it', correct: false },
+                            { text: 'Post on social media', correct: false }
+                        ],
+                        explanation: 'Correct! Use Find My Device (or similar) to locate, lock, or remotely wipe your phone to protect your data.'
+                    }
+                ]
+            },
+            {
+                id: 7,
+                title: 'Email Security',
+                description: 'Protect your email account and recognize threats.',
+                difficulty: 'Beginner',
+                time: '16 min',
+                color: 'blue',
+                icon: 'fa-envelope',
+                lessons: [
+                    {
+                        type: 'content',
+                        title: 'Email Best Practices',
+                        content: `
+                            <div class="space-y-4">
+                                <p class="text-gray-700 dark:text-gray-300">Email is the most common attack vector. Learn to protect your inbox and recognize threats.</p>
+                                <div class="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-4 rounded-r-lg">
+                                    <p class="text-sm text-blue-800 dark:text-blue-300"><strong>Fact:</strong> 91% of all cyber attacks begin with a phishing email.</p>
+                                </div>
+                                <h4 class="font-semibold text-gray-900 dark:text-white mt-4">Email Security Tips:</h4>
+                                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+                                    <li>Never share passwords via email</li>
+                                    <li>Verify sender before clicking links</li>
+                                    <li>Use email encryption for sensitive data</li>
+                                    <li>Enable 2FA on email accounts</li>
+                                    <li>Regularly check login activity</li>
+                                </ul>
+                            </div>
+                        `
+                    },
+                    {
+                        type: 'quiz',
+                        title: 'Email Security Check',
+                        question: 'You receive an email from your "bank" asking you to update your information. What do you do?',
+                        options: [
+                            { text: 'Click the link and update immediately', correct: false },
+                            { text: 'Contact the bank directly using official channels', correct: true },
+                            { text: 'Reply to the email asking if it\'s real', correct: false },
+                            { text: 'Forward it to friends', correct: false }
+                        ],
+                        explanation: 'Correct! Never click links in suspicious emails. Contact your bank directly using their official website or phone number.'
+                    }
+                ]
+            },
+            {
+                id: 8,
+                title: 'Data Privacy Rights',
+                description: 'Understand GDPR, CCPA, and how to control your digital footprint.',
+                difficulty: 'Advanced',
+                time: '25 min',
+                color: 'green',
+                icon: 'fa-lock',
+                lessons: [
+                    {
+                        type: 'content',
+                        title: 'Your Privacy Rights',
+                        content: `
+                            <div class="space-y-4">
+                                <p class="text-gray-700 dark:text-gray-300">You have more control over your personal data than you might think. Learn about your rights under various privacy laws.</p>
+                                <div class="bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 p-4 rounded-r-lg">
+                                    <p class="text-sm text-green-800 dark:text-green-300"><strong>Key Law:</strong> GDPR gives EU citizens the right to access, correct, and delete their personal data.</p>
+                                </div>
+                                <h4 class="font-semibold text-gray-900 dark:text-white mt-4">Your Rights Include:</h4>
+                                <ul class="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+                                    <li>Right to access your data</li>
+                                    <li>Right to correct inaccuracies</li>
+                                    <li>Right to delete data (right to be forgotten)</li>
+                                    <li>Right to data portability</li>
+                                    <li>Right to opt-out of data sales</li>
+                                </ul>
+                            </div>
+                        `
+                    },
+                    {
+                        type: 'quiz',
+                        title: 'Privacy Knowledge Check',
+                        question: 'What does GDPR stand for?',
+                        options: [
+                            { text: 'General Data Protection Regulation', correct: true },
+                            { text: 'Global Digital Privacy Rights', correct: false },
+                            { text: 'Government Data Protection Rule', correct: false },
+                            { text: 'General Digital Privacy Regulation', correct: false }
+                        ],
+                        explanation: 'Correct! GDPR (General Data Protection Regulation) is the EU\'s comprehensive data privacy law that took effect in 2018.'
+                    }
+                ]
+            }
+        ];
+
+        // ==================== MODULE STATE ====================
+        let modules = [];
+        let currentModuleIndex = null;
+        let currentLessonIndex = 0;
+        let userProgress = {};
+
+        // Load progress from localStorage and initialize modules
+        function initializeModules() {
+            userProgress = JSON.parse(localStorage.getItem('moduleProgress')) || {};
+            
+            modules = modulesData.map(module => ({
+                ...module,
+                completed: userProgress[module.id] === 100,
+                progress: userProgress[module.id] || 0
+            }));
+        }
+
+        // Save progress to localStorage
+        function saveProgress() {
+            const progressData = {};
+            modules.forEach(module => {
+                progressData[module.id] = module.progress;
+            });
+            localStorage.setItem('moduleProgress', JSON.stringify(progressData));
+        }
+
+        // ==================== MODULE FUNCTIONS ====================
+        function renderModuleCards() {
+            const container = document.getElementById('moduleCards');
+            const completedCount = modules.filter(m => m.completed).length;
+            
+            document.getElementById('completedModules').textContent = completedCount;
+            document.getElementById('totalModules').textContent = modules.length;
+            
+            const overallProgress = (completedCount / modules.length) * 100;
+            document.getElementById('overallProgress').setAttribute('stroke-dasharray', `${overallProgress}, 100`);
+            document.getElementById('overallProgressText').textContent = `${Math.round(overallProgress)}%`;
+            
+            container.innerHTML = modules.map((module, index) => {
+                const isCompleted = module.completed;
+                const colorClasses = {
+                    blue: 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400',
+                    purple: 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400',
+                    green: 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400'
+                };
+                
+                return `
+                    <div class="module-card bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden" onclick="openModule(${index})">
+                        <div class="h-32 sm:h-40 ${colorClasses[module.color]} flex items-center justify-center">
+                            <i class="fas ${module.icon} text-4xl sm:text-6xl"></i>
+                        </div>
+                        <div class="p-4 sm:p-6">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-semibold ${colorClasses[module.color]} px-2 py-1 rounded-full">${module.difficulty}</span>
+                                ${isCompleted ? '<i class="fas fa-check-circle text-green-500"></i>' : ''}
+                            </div>
+                            <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-2">${module.title}</h3>
+                            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-4">${module.description}</p>
+                            
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                                    <i class="fas fa-clock"></i>
+                                    <span>${module.time}</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                        <div class="bg-blue-600 h-2 rounded-full transition-all" style="width: ${module.progress}%"></div>
+                                    </div>
+                                    <span class="text-xs text-gray-500 dark:text-gray-400">${module.progress}%</span>
+                                </div>
+                            </div>
+                            
+                            <button class="w-full mt-4 py-2 border border-blue-600 dark:border-blue-400 text-blue-600 dark:text-blue-400 rounded-lg font-medium hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors text-sm">
+                                ${isCompleted ? 'Review Module' : module.progress > 0 ? 'Continue' : 'Start Module'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openModule(index) {
+            currentModuleIndex = index;
+            currentLessonIndex = 0;
+            
+            const module = modules[index];
+            document.getElementById('moduleTitle').textContent = module.title;
+            document.getElementById('moduleDescription').textContent = module.description;
+            document.getElementById('moduleDifficulty').textContent = module.difficulty;
+            document.getElementById('moduleTime').textContent = module.time;
+            document.getElementById('totalLessons').textContent = module.lessons.length;
+            
+            const difficultyColors = {
+                'Beginner': 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400',
+                'Intermediate': 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400',
+                'Advanced': 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+            };
+            document.getElementById('moduleDifficulty').className = `text-xs font-semibold px-2 py-1 rounded-full ${difficultyColors[module.difficulty]}`;
+            
+            if (module.progress > 0 && module.progress < 100) {
+                currentLessonIndex = Math.floor((module.progress / 100) * module.lessons.length) - 1;
+                if (currentLessonIndex < 0) currentLessonIndex = 0;
+            }
+            
+            loadLesson(currentLessonIndex);
+            
+            document.getElementById('moduleOverview').classList.remove('active');
+            document.getElementById('moduleContent').classList.add('active');
+            
+            showToast(`Opened: ${module.title}`);
+        }
+
+        function closeModule() {
+            renderModuleCards();
+            document.getElementById('moduleContent').classList.remove('active');
+            document.getElementById('moduleOverview').classList.add('active');
+            currentModuleIndex = null;
+        }
+
+        function loadLesson(index) {
+            const module = modules[currentModuleIndex];
+            const lesson = module.lessons[index];
+            
+            document.getElementById('currentLesson').textContent = index + 1;
+            const progress = ((index + 1) / module.lessons.length) * 100;
+            document.getElementById('lessonProgress').textContent = `${Math.round(progress)}%`;
+            document.getElementById('lessonProgressBar').style.width = `${progress}%`;
+            
+            const contentContainer = document.getElementById('lessonContent');
+            
+            if (lesson.type === 'content') {
+                contentContainer.innerHTML = `
+                    <div class="max-w-3xl">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">${lesson.title}</h3>
+                        <div class="text-gray-700 dark:text-gray-300">
+                            ${lesson.content}
+                        </div>
+                    </div>
+                `;
+            } else if (lesson.type === 'quiz') {
+                contentContainer.innerHTML = `
+                    <div class="max-w-3xl">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">${lesson.title}</h3>
+                        <p class="text-gray-700 dark:text-gray-300 mb-6">${lesson.question}</p>
+                        <div class="space-y-3" id="quizOptions">
+                            ${lesson.options.map((option, i) => `
+                                <button onclick="selectQuizOption(${i})" class="quiz-option w-full text-left p-4 border border-gray-200 dark:border-gray-600 rounded-xl transition-colors" data-index="${i}">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-5 h-5 rounded-full border-2 border-gray-300 dark:border-gray-500 flex items-center justify-center">
+                                            <div class="w-2.5 h-2.5 rounded-full bg-blue-600 opacity-0"></div>
+                                        </div>
+                                        <span class="text-gray-700 dark:text-gray-300">${option.text}</span>
+                                    </div>
+                                </button>
+                            `).join('')}
+                        </div>
+                        <div id="quizFeedback" class="hidden mt-4 p-4 rounded-xl"></div>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('prevLessonBtn').disabled = index === 0;
+            const nextBtn = document.getElementById('nextLessonBtn');
+            if (index === module.lessons.length - 1) {
+                nextBtn.innerHTML = 'Complete Module<i class="fas fa-check ml-2"></i>';
+                nextBtn.onclick = function() { completeModule(); };
+            } else {
+                nextBtn.innerHTML = 'Next<i class="fas fa-arrow-right ml-2"></i>';
+                nextBtn.onclick = function() { nextLesson(); };
+            }
+            
+            module.progress = Math.round(((index + 1) / module.lessons.length) * 100);
+            saveProgress();
+        }
+
+        function selectQuizOption(optionIndex) {
+            const module = modules[currentModuleIndex];
+            const lesson = module.lessons[currentLessonIndex];
+            const selected = lesson.options[optionIndex];
+            
+            document.querySelectorAll('.quiz-option').forEach(btn => {
+                btn.disabled = true;
+                btn.style.cursor = 'not-allowed';
+            });
+            
+            const feedback = document.getElementById('quizFeedback');
+            feedback.classList.remove('hidden');
+            
+            if (selected.correct) {
+                document.querySelector(`.quiz-option[data-index="${optionIndex}"]`).classList.add('correct');
+                feedback.className = 'mt-4 p-4 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800';
+                feedback.innerHTML = `
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-check-circle text-green-600 dark:text-green-400 mt-1"></i>
+                        <div>
+                            <p class="font-semibold text-green-800 dark:text-green-300">Correct!</p>
+                            <p class="text-sm text-green-700 dark:text-green-400 mt-1">${lesson.explanation}</p>
+                        </div>
+                    </div>
+                `;
+                showToast('Correct answer! +10 points');
+            } else {
+                document.querySelector(`.quiz-option[data-index="${optionIndex}"]`).classList.add('incorrect');
+                lesson.options.forEach((opt, i) => {
+                    if (opt.correct) {
+                        document.querySelector(`.quiz-option[data-index="${i}"]`).classList.add('correct');
+                    }
+                });
+                feedback.className = 'mt-4 p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800';
+                feedback.innerHTML = `
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-times-circle text-red-600 dark:text-red-400 mt-1"></i>
+                        <div>
+                            <p class="font-semibold text-red-800 dark:text-red-300">Incorrect</p>
+                            <p class="text-sm text-red-700 dark:text-red-400 mt-1">${lesson.explanation}</p>
+                        </div>
+                    </div>
+                `;
+                showToast('Keep learning! Try again next time');
+            }
+        }
+
+        function nextLesson() {
+            const module = modules[currentModuleIndex];
+            if (currentLessonIndex < module.lessons.length - 1) {
+                currentLessonIndex++;
+                loadLesson(currentLessonIndex);
+            }
+        }
+
+        function previousLesson() {
+            if (currentLessonIndex > 0) {
+                currentLessonIndex--;
+                loadLesson(currentLessonIndex);
+            }
+        }
+
+        function completeModule() {
+            const module = modules[currentModuleIndex];
+            module.completed = true;
+            module.progress = 100;
+            saveProgress();
+            
+            // Add to dashboard activity
+            addActivity('completed', `Completed Module: ${module.title}`, 'fa-check-circle', 'green');
+            
+            // Update dashboard
+            updateDashboardStats();
+            
+            showToast(`🎉 Module Completed: ${module.title}`);
+            closeModule();
+        }
+
+        // ==================== AUDIO PLAYER ====================
+        const episodes = [
+            {
+                id: 1,
+                title: 'The Daily Secure Brief',
+                description: 'Episode 42: The Rise of AI Phishing Attacks',
+                duration: '15:30',
+                durationSeconds: 930,
+                date: 'Today',
+                isLive: true,
+                audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
+            },
+            {
+                id: 2,
+                title: 'Securing Your Home Office',
+                description: 'Best practices for remote work security',
+                duration: '12:45',
+                durationSeconds: 765,
+                date: 'Yesterday',
+                isLive: false,
+                audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
+            },
+            {
+                id: 3,
+                title: 'Understanding Cookies',
+                description: 'What they are and how to manage them',
+                duration: '10:20',
+                durationSeconds: 620,
+                date: '3 days ago',
+                isLive: false,
+                audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'
+            },
+            {
+                id: 4,
+                title: 'Social Engineering Tactics',
+                description: 'How attackers manipulate human psychology',
+                duration: '18:15',
+                durationSeconds: 1095,
+                date: 'Last week',
+                isLive: false,
+                audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3'
+            },
+            {
+                id: 5,
+                title: 'Password Management 101',
+                description: 'Creating and storing secure passwords',
+                duration: '14:00',
+                durationSeconds: 840,
+                date: '2 weeks ago',
+                isLive: false,
+                audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3'
+            }
+        ];
+
+        let currentEpisodeIndex = 0;
+        let isPlaying = false;
+        let playbackSpeed = 1.0;
+        let audio = document.getElementById('audioPlayer');
+        let isInitialLoad = true; // Track if this is the initial page load
+
+        function renderEpisodeList() {
+            const episodeList = document.getElementById('episodeList');
+            document.getElementById('episodeCount').textContent = `${episodes.length} episodes`;
+            
+            episodeList.innerHTML = episodes.map((episode, index) => `
+                <div class="episode-item episode-list-item p-3 sm:p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors ${index === currentEpisodeIndex ? 'active' : ''}" 
+                     onclick="loadEpisode(${index}, true)">
+                    <div class="flex items-center gap-3 sm:gap-4 episode-info">
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-500 dark:text-gray-400 flex-shrink-0 relative">
+                            <i class="fas fa-play play-icon text-xs sm:text-sm"></i>
+                            <div class="playing-indicator">
+                                <div class="audio-wave" style="height: 16px;">
+                                    <div class="audio-bar" style="animation-duration: 0.8s;"></div>
+                                    <div class="audio-bar" style="animation-duration: 0.9s;"></div>
+                                    <div class="audio-bar" style="animation-duration: 1s;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="episode-title text-xs sm:text-sm font-medium text-gray-900 dark:text-white truncate">${episode.title}</p>
+                            <p class="episode-desc text-xs text-gray-500 dark:text-gray-400">${episode.description} • ${episode.duration}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 sm:gap-3">
+                        <span class="text-xs text-gray-400 hide-sm">${episode.date}</span>
+                        <button onclick="event.stopPropagation(); downloadEpisode(${index})" class="text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 text-xs sm:text-sm flex-shrink-0" title="Download">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // FIXED: Only show toast when user actively selects episode (not on initial load)
+        function loadEpisode(index, showToastOnLoad = false) {
+            currentEpisodeIndex = index;
+            const episode = episodes[index];
+            
+            document.getElementById('currentEpisodeTitle').textContent = episode.title;
+            document.getElementById('currentEpisodeDesc').textContent = episode.description;
+            document.getElementById('liveBadge').classList.toggle('hidden', !episode.isLive);
+            document.getElementById('totalTime').textContent = episode.duration;
+            document.getElementById('progressBar').value = 0;
+            document.getElementById('currentTime').textContent = '0:00';
+            
+            audio.src = episode.audioUrl;
+            audio.playbackRate = playbackSpeed;
+            
+            isPlaying = false;
+            updatePlayPauseButton();
+            document.getElementById('audioWave').classList.add('paused');
+            
+            renderEpisodeList();
+            
+            // FIXED: Only show toast if user actively clicked (not on initial page load)
+            if (showToastOnLoad && !isInitialLoad) {
+                showToast(`Now playing: ${episode.title}`);
+            }
+            
+            // Mark initial load as complete after first episode load
+            if (isInitialLoad) {
+                isInitialLoad = false;
+            }
+        }
+
+        function togglePlayPause() {
+            if (isPlaying) {
+                audio.pause();
+                isPlaying = false;
+                document.getElementById('audioWave').classList.add('paused');
+            } else {
+                audio.play().catch(error => {
+                    console.log('Audio play error:', error);
+                    showToast('Click anywhere to enable audio playback');
+                });
+                isPlaying = true;
+                document.getElementById('audioWave').classList.remove('paused');
+            }
+            updatePlayPauseButton();
+        }
+
+        function updatePlayPauseButton() {
+            const icon = document.getElementById('playPauseIcon');
+            if (isPlaying) {
+                icon.classList.remove('fa-play');
+                icon.classList.add('fa-pause');
+            } else {
+                icon.classList.remove('fa-pause');
+                icon.classList.add('fa-play');
+            }
+        }
+
+        function setupAudioListeners() {
+            audio.addEventListener('timeupdate', () => {
+                if (audio.duration) {
+                    const progress = (audio.currentTime / audio.duration) * 100;
+                    document.getElementById('progressBar').value = progress;
+                    document.getElementById('currentTime').textContent = formatTime(audio.currentTime);
+                }
+            });
+
+            audio.addEventListener('ended', () => {
+                isPlaying = false;
+                updatePlayPauseButton();
+                document.getElementById('audioWave').classList.add('paused');
+                playNext();
+            });
+
+            audio.addEventListener('loadedmetadata', () => {
+                document.getElementById('totalTime').textContent = formatTime(audio.duration);
+            });
+        }
+
+        function seekAudio() {
+            const progress = document.getElementById('progressBar').value;
+            if (audio.duration) {
+                audio.currentTime = (progress / 100) * audio.duration;
+            }
+        }
+
+        function setVolume() {
+            const volume = document.getElementById('volumeSlider').value;
+            audio.volume = volume / 100;
+            updateVolumeIcon();
+        }
+
+        function toggleMute() {
+            if (audio.volume > 0) {
+                audio.dataset.previousVolume = audio.volume;
+                audio.volume = 0;
+                document.getElementById('volumeSlider').value = 0;
+            } else {
+                audio.volume = audio.dataset.previousVolume || 0.8;
+                document.getElementById('volumeSlider').value = (audio.volume * 100);
+            }
+            updateVolumeIcon();
+        }
+
+        function updateVolumeIcon() {
+            const icon = document.getElementById('volumeIcon');
+            const volume = audio.volume;
+            
+            icon.classList.remove('fa-volume-mute', 'fa-volume-down', 'fa-volume-up');
+            
+            if (volume === 0) {
+                icon.classList.add('fa-volume-mute');
+            } else if (volume < 0.5) {
+                icon.classList.add('fa-volume-down');
+            } else {
+                icon.classList.add('fa-volume-up');
+            }
+        }
+
+        function toggleSpeed() {
+            const speeds = [0.5, 1.0, 1.25, 1.5, 2.0];
+            let currentIndex = speeds.indexOf(playbackSpeed);
+            currentIndex = (currentIndex + 1) % speeds.length;
+            playbackSpeed = speeds[currentIndex];
+            audio.playbackRate = playbackSpeed;
+            document.getElementById('speedBtn').textContent = `${playbackSpeed}x`;
+            showToast(`Playback speed: ${playbackSpeed}x`);
+        }
+
+        function playPrevious() {
+            if (currentEpisodeIndex > 0) {
+                loadEpisode(currentEpisodeIndex - 1, true);
+                if (isPlaying) {
+                    audio.play();
+                }
+            } else {
+                audio.currentTime = 0;
+            }
+        }
+
+        function playNext() {
+            if (currentEpisodeIndex < episodes.length - 1) {
+                loadEpisode(currentEpisodeIndex + 1, true);
+                if (isPlaying) {
+                    audio.play();
+                }
+            } else {
+                showToast('No more episodes');
+            }
+        }
+
+        function downloadEpisode(index) {
+            const episode = episodes[index];
+            showToast(`Downloading: ${episode.title}`);
+        }
+
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return '0:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // ==================== THEME & SIDEBAR ====================
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.classList.contains('dark');
+            
+            if (isDark) {
+                html.classList.remove('dark');
+                html.classList.add('light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.remove('light');
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        let isSidebarOpen = true;
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const toggleBtn = document.querySelector('.toggle-btn');
+        const overlay = document.getElementById('sidebarOverlay');
+
+        function toggleSidebar() {
+            const isMobile = window.innerWidth <= 768;
+            
+            if (isMobile) {
+                sidebar.classList.toggle('mobile-open');
+                overlay.classList.toggle('active');
+            } else {
+                isSidebarOpen = !isSidebarOpen;
+                
+                if (isSidebarOpen) {
+                    sidebar.classList.remove('collapsed');
+                    mainContent.classList.remove('expanded');
+                    toggleBtn.classList.remove('rotated');
+                } else {
+                    sidebar.classList.add('collapsed');
+                    mainContent.classList.add('expanded');
+                    toggleBtn.classList.add('rotated');
+                }
+            }
+        }
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('mobile-open');
+            overlay.classList.remove('active');
+        });
+
+        window.addEventListener('resize', () => {
+            const isMobile = window.innerWidth <= 768;
+            if (!isMobile) {
+                overlay.classList.remove('active');
+                sidebar.classList.remove('mobile-open');
+                if (!isSidebarOpen) {
+                    sidebar.classList.add('collapsed');
+                    mainContent.classList.add('expanded');
+                } else {
+                    sidebar.classList.remove('collapsed');
+                    mainContent.classList.remove('expanded');
+                }
+            } else {
+                sidebar.classList.remove('collapsed');
+                mainContent.classList.remove('expanded');
+                toggleBtn.classList.remove('rotated');
+                isSidebarOpen = true;
+            }
+        });
+
+        function switchSection(sectionId, element) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            document.getElementById(`section-${sectionId}`).classList.add('active');
+
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+                item.classList.add('text-gray-700');
+            });
+            element.classList.add('active');
+            element.classList.remove('text-gray-700');
+
+            const titles = {
+                'home': { title: 'Dashboard', subtitle: 'Overview of your digital safety status' },
+                'learn': { title: 'Learning Center', subtitle: 'Modules and resources to improve security' },
+                'videos': { title: 'Educational Videos', subtitle: 'Learn through curated educational content' },
+                'listen': { title: 'Audio Briefings', subtitle: 'Podcasts and news updates on digital threats' },
+                'reference': { title: 'References', subtitle: 'All content sources and citations' },
+                'about': { title: 'About Us', subtitle: 'Our mission and contact information' }
+            };
+
+            document.getElementById('page-title').textContent = titles[sectionId].title;
+            document.getElementById('page-subtitle').textContent = titles[sectionId].subtitle;
+
+            // Refresh dashboard when switching to home
+            if (sectionId === 'home') {
+                updateDashboardStats();
+                renderActivity();
+            }
+
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('mobile-open');
+                overlay.classList.remove('active');
+            }
+        }
+
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const html = document.documentElement;
+            
+            if (savedTheme === 'dark') {
+                html.classList.add('dark');
+                html.classList.remove('light');
+            } else {
+                html.classList.add('light');
+                html.classList.remove('dark');
+            }
+            
+            // Load dashboard data
+            loadDashboardData();
+            
+            // Check if tip was dismissed
+            const tipDismissed = localStorage.getItem('tipDismissed');
+            if (tipDismissed === 'true') {
+                document.getElementById('dailyTipCard').style.display = 'none';
+            }
+            
+            // Load tip
+            loadTip();
+            
+            // Initialize modules with saved progress
+            initializeModules();
+            renderModuleCards();
+            
+            // Update dashboard stats
+            updateDashboardStats();
+            renderActivity();
+            
+            // Initialize audio - FIXED: Don't show toast on initial load
+            renderEpisodeList();
+            loadEpisode(0, false); // Pass false to NOT show toast on initial load
+            setupAudioListeners();
+            
+            // Initialize sidebar
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('mobile-open');
+                isSidebarOpen = false;
+            }
+            
+            // Add keyboard shortcut listener for search
+            document.addEventListener('keydown', handleSearchInput);
+        });
+    </script>
+</body>
+</html>
