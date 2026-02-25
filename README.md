@@ -1,4 +1,8 @@
 
+Browse safely 
+https://github.com/user-attachments/assets/5733e0bd-cf63-441d-aad8-4a88ed58c116
+
+
 Social Media Privacy settings 
 https://github.com/user-attachments/assets/1bb09004-3c59-4e06-b659-cbcfc1152090
 
