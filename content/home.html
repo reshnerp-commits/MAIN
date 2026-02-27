@@ -1,0 +1,42 @@
+<!-- content/home.html -->
+<div class="content-section active" id="section-home">
+    <div class="flex justify-end mb-4">
+        <button onclick="refreshDashboard()" class="refresh-btn flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium">
+            <i class="fas fa-sync-alt"></i>
+            <span class="hidden sm:inline">Refresh</span>
+        </button>
+    </div>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-50 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-shield-virus text-blue-600 dark:text-blue-400"></i>
+                </div>
+                <span id="securityScoreChange" class="text-green-500 text-xs sm:text-sm font-medium">+0%</span>
+            </div>
+            <h3 id="securityScore" class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">0%</h3>
+            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Security Score</p>
+        </div>
+        
+        <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-orange-50 dark:bg-orange-900/30 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-exclamation-triangle text-orange-600 dark:text-orange-400"></i>
+                </div>
+            </div>
+            <h3 id="threatsCount" class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">0</h3>
+            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Active Threats</p>
+        </div>
+        
+        <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-green-50 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-check-circle text-green-600 dark:text-green-400"></i>
+                </div>
+            </div>
+            <h3 id="modulesCompleted" class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">0/8</h3>
+            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Modules Finished</p>
+        </div>
+    </div>
+</div>
