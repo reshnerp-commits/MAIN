@@ -1,5 +1,13 @@
 
 
+EARTH ROTATION VIDEO LOOP
+
+https://github.com/user-attachments/assets/0835661b-c215-4cab-be3b-7e402cca652a
+
+
+
+HOME SECTION BACKGROUND 
+
 https://github.com/user-attachments/assets/9a54b48c-4b87-4ad7-aea9-a729c2b64abb
 
 
