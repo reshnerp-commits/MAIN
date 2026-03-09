@@ -1,4 +1,10 @@
 
+Calagos
+![89710](https://github.com/user-attachments/assets/37105997-5e07-46e4-a67a-1693248c724f)
+
+Reshner
+![89712](https://github.com/user-attachments/assets/59f71b21-347c-4f1b-b6d8-3f0a5473038a)
+
 
 Jaric
 ![89702](https://github.com/user-attachments/assets/cf2c628e-c339-4f20-9809-02b5f9ed7986)
