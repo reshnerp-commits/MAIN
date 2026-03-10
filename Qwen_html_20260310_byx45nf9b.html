@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 Fire Safety Immersion Survey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 🎨 MODERN CSS VARIABLES */
+        :root {
+            --primary: #ff6b35;
+            --primary-dark: #e55a2b;
+            --secondary: #f7931e;
+            --accent: #ff4757;
+            --dark: #2f3542;
+            --darker: #1e272e;
+            --light: #f8f9fa;
+            --gray: #747d8c;
+            --success: #2ed573;
+            --error: #ff4757;
+            --gradient: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #ff4757 100%);
+            --gradient-hover: linear-gradient(135deg, #e55a2b 0%, #e67e22 50%, #ff3838 100%);
+            --shadow: 0 10px 40px rgba(255, 107, 53, 0.3);
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.3);
+            --border-radius: 16px;
+            --border-radius-sm: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--gradient);
+            background-attachment: fixed;
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(255, 165, 0, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            z-index: 10;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+            padding-bottom: 25px;
+            border-bottom: 3px solid var(--gradient);
+            position: relative;
+        }
+
+        .header::after {
+            content: '🔥';
+            position: absolute;
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: var(--gray);
+            font-size: 1.05rem;
+            margin-bottom: 0;
+        }
+
+        .privacy-note {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border-left: 4px solid var(--secondary);
+            padding: 12px 20px;
+            border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
+            margin: 25px 0;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: pulse 3s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(247, 147, 30, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(247, 147, 30, 0); }
+        }
+
+        .progress-container {
+            margin: 30px 0;
+            padding: 0 10px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #eee;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient);
+            border-radius: 10px;
+            width: 25%;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .form-step {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        fieldset {
+            border: 2px solid #eee;
+            border-radius: var(--border-radius-sm);
+            padding: 25px;
+            margin-bottom: 25px;
+            background: var(--light);
+            transition: var(--transition);
+            border-left: 4px solid var(--primary);
+        }
+
+        fieldset:hover {
+            border-color: var(--secondary);
+            box-shadow: var(--shadow-sm);
+            transform: translateY(-2px);
+        }
+
+        legend {
+            font-weight: 600;
+            color: var(--primary-dark);
+            padding: 0 15px;
+            font-size: 1.2rem;
+            background: white;
+            position: relative;
+            top: -12px;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .form-group.required label::after {
+            content: ' *';
+            color: var(--accent);
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: var(--border-radius-sm);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: var(--transition);
+            background: white;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.15);
+            transform: translateY(-1px);
+        }
+
+        /* ✅ FIXED: Floating Label - Now works for textarea too */
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper input:focus ~ label,
+        .input-wrapper input:not(:placeholder-shown) ~ label,
+        .input-wrapper textarea:focus ~ label,
+        .input-wrapper textarea:not(:placeholder-shown) ~ label {
+            transform: translateY(-25px) scale(0.85);
+            color: var(--primary);
+            font-weight: 500;
+            background: white;
+            padding: 0 5px;
+            left: 13px;
+        }
+
+        .input-wrapper label {
+            position: absolute;
+            left: 18px;
+            top: 14px;
+            color: var(--gray);
+            pointer-events: none;
+            transition: var(--transition);
+            background: transparent;
+            padding: 0 5px;
+            z-index: 1;
+        }
+
+        /* ✅ FIXED: Textarea padding so text doesn't hide under label */
+        .input-wrapper textarea {
+            padding-top: 25px;
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .radio-group, .checkbox-group {
+            display: grid;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .radio-option, .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 18px;
+            background: white;
+            border: 2px solid #eee;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .radio-option:hover, .checkbox-option:hover {
+            border-color: var(--secondary);
+            background: #fffaf5;
+            transform: translateX(5px);
+        }
+
+        .radio-option input, .checkbox-option input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .radio-option.selected, .checkbox-option input:checked + span {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(255,107,53,0.1) 0%, rgba(247,147,30,0.1) 100%);
+        }
+
+        .likert-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 15px;
+            background: white;
+            border-radius: var(--border-radius-sm);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .likert-table th {
+            background: var(--gradient);
+            color: white;
+            padding: 15px 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        .likert-table td {
+            padding: 12px 10px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            transition: var(--transition);
+        }
+
+        .likert-table tr:hover td {
+            background: #fffaf5;
+        }
+
+        .likert-table td:first-child {
+            text-align: left;
+            font-weight: 500;
+            padding-left: 20px;
+            width: 55%;
+        }
+
+        .likert-table input[type="radio"] {
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            accent-color: var(--primary);
+            transition: var(--transition);
+        }
+
+        .likert-table input[type="radio"]:hover {
+            transform: scale(1.15);
+        }
+
+        .skip-btn {
+            background: none;
+            border: 2px dashed var(--gray);
+            color: var(--gray);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        .skip-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        .form-navigation {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: space-between;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: inherit;
+        }
+
+        .btn-prev {
+            background: white;
+            color: var(--dark);
+            border: 2px solid #eee;
+        }
+
+        .btn-prev:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateX(-3px);
+        }
+
+        .btn-next, .btn-submit {
+            background: var(--gradient);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-next:hover, .btn-submit:hover {
+            background: var(--gradient-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 50px rgba(255, 107, 53, 0.5);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-submit {
+            width: 100%;
+            justify-content: center;
+            font-size: 1.1rem;
+            padding: 16px;
+        }
+
+        .message-box {
+            display: none;
+            text-align: center;
+            padding: 40px 30px;
+            border-radius: var(--border-radius);
+            animation: popIn 0.5s ease;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        #success-message {
+            background: linear-gradient(135deg, #dff0d8 0%, #c3e6cb 100%);
+            border: 2px solid var(--success);
+            color: #155724;
+        }
+
+        #success-message h3 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--success);
+        }
+
+        #error-message {
+            background: linear-gradient(135deg, #f2dede 0%, #ebccd1 100%);
+            border: 2px solid var(--error);
+            color: #721c24;
+        }
+
+        #error-message h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: var(--gradient);
+            border-radius: 50%;
+            animation: confetti-fall 3s ease-in-out forwards;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 25px 20px; margin: 10px; }
+            h1 { font-size: 1.8rem; }
+            .likert-table { font-size: 0.85rem; }
+            .likert-table th, .likert-table td { padding: 8px 5px; }
+            .likert-table td:first-child { width: 50%; padding-left: 12px; font-size: 0.9rem; }
+            .form-navigation { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+        }
+
+        @media (max-width: 480px) {
+            .likert-table { display: block; overflow-x: auto; }
+            .radio-option, .checkbox-option { padding: 10px 15px; font-size: 0.95rem; }
+        }
+
+        *:focus-visible {
+            outline: 3px solid var(--secondary);
+            outline-offset: 2px;
+        }
+
+        .step-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ddd;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .step-dot.active {
+            background: var(--primary);
+            transform: scale(1.3);
+            box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.3);
+        }
+
+        .step-dot.completed {
+            background: var(--success);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>🔥 Fire Safety Immersion Survey</h1>
+        <p class="subtitle">Help us improve fire safety practices for future students</p>
+    </div>
+    
+    <div class="privacy-note">
+        🔒 <strong>Your Privacy Matters:</strong> All responses are anonymous. Name is optional.
+    </div>
+
+    <div class="progress-container">
+        <div class="progress-label">
+            <span>Progress</span>
+            <span id="progress-text">Step 1 of 4</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+    </div>
+
+    <div class="step-indicators">
+        <div class="step-dot active" data-step="1"></div>
+        <div class="step-dot" data-step="2"></div>
+        <div class="step-dot" data-step="3"></div>
+        <div class="step-dot" data-step="4"></div>
+    </div>
+
+    <form id="surveyForm" action="https://formspree.io/f/mreypqvl" method="POST">
+        
+        <!-- STEP 1: Name & Demographics -->
+        <div class="form-step active" data-step="1">
+            <fieldset>
+                <legend>👤 Respondent Information</legend>
+                
+                <div class="form-group">
+                    <div class="input-wrapper">
+                        <input type="text" id="name" name="name" placeholder=" " autocomplete="name">
+                        <label for="name">Name (Optional)</label>
+                    </div>
+                    <button type="button" class="skip-btn" id="skip-name">⏭ Skip this field</button>
+                </div>
+
+                <div class="form-group required">
+                    <label for="age">1.1 Age</label>
+                    <input type="number" id="age" name="age" min="10" max="100" required placeholder="Enter your age">
+                </div>
+
+                <div class="form-group required">
+                    <label>1.2 Gender</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="gender" value="Male" required> 
+                            <span>Male</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="gender" value="Female"> 
+                            <span>Female</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="gender" value="Other"> 
+                            <span>Other / Prefer not to say</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group required">
+                    <label for="grade">1.3 Grade Level</label>
+                    <select id="grade" name="grade" required>
+                        <option value="" disabled selected>Select your grade level</option>
+                        <option value="Grade 11">Grade 11</option>
+                        <option value="Grade 12">Grade 12</option>
+                        <option value="College 1st Year">College 1st Year</option>
+                        <option value="College 2nd Year">College 2nd Year</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+            </fieldset>
+        </div>
+
+        <!-- STEP 2: Effectiveness Rating -->
+        <div class="form-step" data-step="2">
+            <fieldset>
+                <legend>📊 Effectiveness of Fire Safety Practices</legend>
+                <p style="margin-bottom: 15px; color: var(--gray);">
+                    <strong>Instructions:</strong> Rate how effective the fire safety practices were during your immersion.
+                </p>
+                <table class="likert-table">
+                    <thead>
+                        <tr>
+                            <th>Statement</th>
+                            <th>5<br><small>Very Effective</small></th>
+                            <th>4<br><small>Effective</small></th>
+                            <th>3<br><small>Neutral</small></th>
+                            <th>2<br><small>Ineffective</small></th>
+                            <th>1<br><small>Not Effective</small></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Overall effectiveness of fire safety practices on immersion students</td>
+                            <td><input type="radio" name="q2_effectiveness" value="5" required></td>
+                            <td><input type="radio" name="q2_effectiveness" value="4"></td>
+                            <td><input type="radio" name="q2_effectiveness" value="3"></td>
+                            <td><input type="radio" name="q2_effectiveness" value="2"></td>
+                            <td><input type="radio" name="q2_effectiveness" value="1"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </fieldset>
+        </div>
+
+        <!-- STEP 3: Practices Implemented -->
+        <div class="form-step" data-step="3">
+            <fieldset>
+                <legend>✅ Practices Implemented</legend>
+                <p style="margin-bottom: 15px; color: var(--gray);">
+                    <strong>Instructions:</strong> Select ALL fire safety practices that were implemented during your immersion.
+                </p>
+                <div class="checkbox-group">
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="practices" value="Fire Drill"> 
+                        <span>🚨 Conducted Fire Drills</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="practices" value="Extinguisher Training"> 
+                        <span>🧯 Fire Extinguisher Training (PASS technique)</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="practices" value="Evacuation Plan"> 
+                        <span>🗺️ Review of Evacuation Maps/Plans</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="practices" value="Safety Gear"> 
+                        <span>🦺 Provision of Safety Gear (Masks, Vests)</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="practices" value="Briefing"> 
+                        <span>📋 Pre-immersion Safety Briefing</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="practices" value="Other"> 
+                        <span>✨ Other (please specify in comments)</span>
+                    </label>
+                </div>
+            </fieldset>
+        </div>
+
+        <!-- STEP 4: Usage & Comments -->
+        <div class="form-step" data-step="4">
+            <fieldset>
+                <legend>🎯 Your Usage of Practices</legend>
+                <p style="margin-bottom: 15px; color: var(--gray);">
+                    <strong>Instructions:</strong> How effectively did YOU use these practices during activities?
+                </p>
+                <table class="likert-table">
+                    <thead>
+                        <tr>
+                            <th>Statement</th>
+                            <th>5<br><small>Always</small></th>
+                            <th>4<br><small>Often</small></th>
+                            <th>3<br><small>Sometimes</small></th>
+                            <th>2<br><small>Rarely</small></th>
+                            <th>1<br><small>Never</small></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>I strictly followed the evacuation procedures.</td>
+                            <td><input type="radio" name="q4_usage_evacuation" value="5" required></td>
+                            <td><input type="radio" name="q4_usage_evacuation" value="4"></td>
+                            <td><input type="radio" name="q4_usage_evacuation" value="3"></td>
+                            <td><input type="radio" name="q4_usage_evacuation" value="2"></td>
+                            <td><input type="radio" name="q4_usage_evacuation" value="1"></td>
+                        </tr>
+                        <tr>
+                            <td>I utilized safety equipment correctly when needed.</td>
+                            <td><input type="radio" name="q4_usage_equipment" value="5" required></td>
+                            <td><input type="radio" name="q4_usage_equipment" value="4"></td>
+                            <td><input type="radio" name="q4_usage_equipment" value="3"></td>
+                            <td><input type="radio" name="q4_usage_equipment" value="2"></td>
+                            <td><input type="radio" name="q4_usage_equipment" value="1"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </fieldset>
+
+            <fieldset>
+                <legend>💬 Additional Comments</legend>
+                <div class="form-group">
+                    <!-- ✅ FIXED: Textarea with proper floating label setup -->
+                    <div class="input-wrapper">
+                        <textarea id="comments" name="comments" placeholder=" " autocomplete="off"></textarea>
+                        <label for="comments">Any other observations about fire safety practices?</label>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <div class="form-navigation">
+            <button type="button" class="btn btn-prev" id="prevBtn" style="display: none;">
+                ← Previous
+            </button>
+            <button type="button" class="btn btn-next" id="nextBtn">
+                Next Step →
+            </button>
+            <button type="submit" class="btn btn-submit" id="submitBtn" style="display: none;">
+                🚀 Submit Survey
+            </button>
+        </div>
+    </form>
+
+    <div id="success-message" class="message-box">
+        <h3>🎉 Thank You!</h3>
+        <p style="font-size: 1.1rem; margin: 15px 0;">Your responses have been recorded successfully.</p>
+        <p style="color: var(--gray);">Your feedback helps create safer immersion experiences for future students.</p>
+    </div>
+
+    <div id="error-message" class="message-box">
+        <h3>⚠️ Submission Failed</h3>
+        <p>There was a problem submitting your form. Please try again.</p>
+        <button onclick="location.reload()" class="btn btn-submit" style="margin-top: 20px; width: auto;">
+            🔄 Try Again
+        </button>
+    </div>
+</div>
+
+<script>
+    // 🎯 Multi-Step Form Logic
+    const form = document.getElementById('surveyForm');
+    const steps = document.querySelectorAll('.form-step');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const progressFill = document.getElementById('progress-fill');
+    const progressText = document.getElementById('progress-text');
+    const stepDots = document.querySelectorAll('.step-dot');
+    const skipNameBtn = document.getElementById('skip-name');
+    const successMessage = document.getElementById('success-message');
+    const errorMessage = document.getElementById('error-message');
+    
+    let currentStep = 1;
+    const totalSteps = steps.length;
+
+    function updateProgress() {
+        const progress = (currentStep / totalSteps) * 100;
+        progressFill.style.width = `${progress}%`;
+        progressText.textContent = `Step ${currentStep} of ${totalSteps}`;
+        
+        stepDots.forEach((dot, index) => {
+            const stepNum = index + 1;
+            dot.classList.remove('active', 'completed');
+            if (stepNum === currentStep) {
+                dot.classList.add('active');
+            } else if (stepNum < currentStep) {
+                dot.classList.add('completed');
+            }
+        });
+        
+        prevBtn.style.display = currentStep === 1 ? 'none' : 'flex';
+        nextBtn.style.display = currentStep === totalSteps ? 'none' : 'flex';
+        submitBtn.style.display = currentStep === totalSteps ? 'flex' : 'none';
+    }
+
+    function showStep(step) {
+        steps.forEach(s => s.classList.remove('active'));
+        document.querySelector(`.form-step[data-step="${step}"]`).classList.add('active');
+        currentStep = step;
+        updateProgress();
+        document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    nextBtn.addEventListener('click', () => {
+        if (validateStep(currentStep)) {
+            showStep(currentStep + 1);
+        }
+    });
+
+    prevBtn.addEventListener('click', () => {
+        showStep(currentStep - 1);
+    });
+
+    stepDots.forEach(dot => {
+        dot.addEventListener('click', () => {
+            const targetStep = parseInt(dot.dataset.step);
+            if (targetStep <= currentStep || validateStep(currentStep)) {
+                showStep(targetStep);
+            }
+        });
+    });
+
+    skipNameBtn.addEventListener('click', () => {
+        document.getElementById('name').value = '';
+        skipNameBtn.textContent = '✓ Skipped';
+        skipNameBtn.style.borderColor = 'var(--success)';
+        skipNameBtn.style.color = 'var(--success)';
+        skipNameBtn.disabled = true;
+    });
+
+    function validateStep(step) {
+        const currentStepEl = document.querySelector(`.form-step[data-step="${step}"]`);
+        const requiredInputs = currentStepEl.querySelectorAll('[required]');
+        let isValid = true;
+        
+        requiredInputs.forEach(input => {
+            if (!input.value && input.type !== 'radio' && input.type !== 'checkbox') {
+                isValid = false;
+                input.style.borderColor = 'var(--error)';
+                input.focus();
+            } else if ((input.type === 'radio' || input.type === 'checkbox') && 
+                      !currentStepEl.querySelector(`[name="${input.name}"]:checked`)) {
+                const groupName = input.name;
+                const groupChecked = currentStepEl.querySelector(`[name="${groupName}"]:checked`);
+                if (!groupChecked && input.required) {
+                    isValid = false;
+                    const group = input.closest('.radio-group, .checkbox-group, .likert-table');
+                    if (group) {
+                        group.style.boxShadow = '0 0 0 3px rgba(255, 71, 87, 0.3)';
+                        setTimeout(() => group.style.boxShadow = '', 2000);
+                    }
+                }
+            } else {
+                input.style.borderColor = '';
+            }
+        });
+        
+        if (!isValid) {
+            const firstInvalid = currentStepEl.querySelector('[required]:invalid');
+            if (firstInvalid) {
+                firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            alert('Please complete all required fields before continuing.');
+        }
+        
+        return isValid;
+    }
+
+    document.querySelectorAll('input[required], select[required], textarea[required]').forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.value || this.checked) {
+                this.style.borderColor = 'var(--success)';
+            } else if (this.type !== 'radio' && this.type !== 'checkbox') {
+                this.style.borderColor = 'var(--error)';
+            }
+        });
+        input.addEventListener('focus', function() {
+            this.style.borderColor = '';
+        });
+    });
+
+    document.querySelectorAll('.radio-option, .checkbox-option').forEach(option => {
+        option.addEventListener('click', function(e) {
+            if (e.target.tagName !== 'INPUT') {
+                const input = this.querySelector('input');
+                if (input.type === 'radio') {
+                    const name = input.name;
+                    document.querySelectorAll(`input[name="${name}"]`).forEach(radio => {
+                        radio.closest('.radio-option').classList.remove('selected');
+                    });
+                    input.checked = true;
+                } else {
+                    input.checked = !input.checked;
+                }
+                this.classList.toggle('selected', input.checked);
+            }
+        });
+    });
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        if (!validateStep(currentStep)) return;
+        
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '⏳ Submitting...';
+        
+        const formData = new FormData(form);
+        
+        try {
+            const response = await fetch(form.action, {
+                method: form.method,
+                body: formData,
+                headers: { 'Accept': 'application/json' }
+            });
+            
+            if (response.ok) {
+                form.style.display = 'none';
+                successMessage.style.display = 'block';
+                createConfetti();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                // Clear localStorage draft after successful submit
+                localStorage.removeItem('fireSafetySurveyDraft');
+            } else {
+                throw new Error('Form submission failed');
+            }
+        } catch (error) {
+            console.error('Submission error:', error);
+            form.style.display = 'none';
+            errorMessage.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    });
+
+    function createConfetti() {
+        const colors = ['#ff6b35', '#f7931e', '#ff4757', '#2ed573', '#1e90ff', '#ffa502'];
+        for (let i = 0; i < 150; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animationDelay = Math.random() * 2 + 's';
+            confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            confetti.style.width = (Math.random() * 8 + 5) + 'px';
+            confetti.style.height = confetti.style.width;
+            document.body.appendChild(confetti);
+            setTimeout(() => confetti.remove(), 5000);
+        }
+    }
+
+    updateProgress();
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey && currentStep < totalSteps) {
+            e.preventDefault();
+            if (validateStep(currentStep)) showStep(currentStep + 1);
+        } else if (e.key === 'Enter' && e.shiftKey && currentStep > 1) {
+            e.preventDefault();
+            showStep(currentStep - 1);
+        }
+    });
+
+    // Auto-save draft
+    form.addEventListener('input', () => {
+        const formData = {};
+        new FormData(form).forEach((value, key) => {
+            formData[key] = value;
+        });
+        localStorage.setItem('fireSafetySurveyDraft', JSON.stringify(formData));
+    });
+
+    // Load draft
+    window.addEventListener('load', () => {
+        const draft = localStorage.getItem('fireSafetySurveyDraft');
+        if (draft) {
+            const data = JSON.parse(draft);
+            Object.keys(data).forEach(key => {
+                const input = form.querySelector(`[name="${key}"]`);
+                if (input) {
+                    if (input.type === 'checkbox' || input.type === 'radio') {
+                        const value = data[key];
+                        const target = form.querySelector(`[name="${key}"][value="${value}"]`);
+                        if (target) target.checked = true;
+                    } else {
+                        input.value = data[key];
+                    }
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
